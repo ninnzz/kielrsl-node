@@ -1,7 +1,0 @@
-{
-
-	"_id"	: 1,									//activity id
-	"description" 	: "Sample activity",
-	"points"		: 1,
-	"condition"		: ""		
-}
