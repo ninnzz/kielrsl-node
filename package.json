@@ -1,0 +1,27 @@
+{
+    "name": "kielrslnode",
+    "description": "Node.js JSON rest server with auth support",
+    "version": "0.0.1",
+    "author": "Nino Eclarin <nreclarin@gmail.com>",
+    "contributors": [{ "name": "Nino Eclarin", "email": "nreclarin@gmail.com" },{ "name": "Raven Lagrimas", "email": "rjlagrimas08@gmail.com" }],
+    "dependencies":  {
+        "mongodb"   : "*",
+        "mysql" : "*"
+        },
+    "main" : "index.js",
+    "engines": { "node": ">= 0.4.10" },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pprmint/kielrsl_node.git"
+    },
+    "keywords": [
+        "JSON",
+        "REST",
+        "framework",
+        "JSON REST Server",
+        "Auth Server",
+        "OAuth"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/pprmint/kielrsl_node"
+}
