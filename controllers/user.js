@@ -1,16 +1,16 @@
-var user = function(response,logger){
+var user = function(kiel){
 	var mongoose = require("mongoose");
 
 	return {
 		get : {
 			index : function(req,res) {
 
-				//process database query here
+				//perform any data manipulation
 
 				//example in loading the logs
-				logger("Finised exectuing users",'access');
+				kiel.logger("Finised exectuing users",'access');
 				//example in acessing the response
-				response(req, res, {message : "Sample return from users"}, 200);
+				kiel.response(req, res, {message : "Sample return from users"}, 200);
 			}
 		},
 
