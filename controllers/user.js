@@ -1,10 +1,10 @@
 var user = function(kiel){
 	var mongoose = require("mongoose");
-
+	var ba = "asd";
 	return {
 		get : {
 			index : function(req,res) {
-
+				console.log(ba);
 				//perform any data manipulation
 				data = {
 

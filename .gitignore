@@ -6,6 +6,10 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.crt
+*.csr
+*.key
+*.org
 
 pids
 logs
