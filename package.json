@@ -15,6 +15,9 @@
         "type": "git",
         "url": "https://github.com/pprmint/kielrsl-node.git"
     },
+    "scripts" : {
+        "start" : "node index.js"
+    },
     "keywords": [
         "JSON",
         "REST",
