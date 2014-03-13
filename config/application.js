@@ -7,7 +7,7 @@ var application = {
 	 *
 	 */
 
-	"is_https"			: true,	
+	"is_https"			: false,	
 	"ssl_server_key"	: "/../certs/server.key",
 	"ssl_server_cert"	: "/../certs/server.crt",
 	"ssl_ca_cert"		: "/../certs/ca.crt",
