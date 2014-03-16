@@ -32,9 +32,8 @@ Request data are stored in the request object and are automatically parsed by th
 
 Example:
 
-	req.post_args.username 		//gets the value for username
-
-	req.get_args.limit 			//gets the value for limit
+`req.post_args.username 		//gets the value for username`
+`req.get_args.limit 			//gets the value for limit`
 
 ##### Logger
 `kiel.logger(message,log_type)` will invoke the logger class and store the logs in the log folder defined in config.
