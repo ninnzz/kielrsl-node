@@ -10,7 +10,7 @@ var auth = function(kiel){
 		post : {
 			register : function(req,res) {
 				
-				var rqrd = ['username','email','password'];
+				var rqrd = ['email','password','app_id'];
 				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 500);
 
 
@@ -20,7 +20,7 @@ var auth = function(kiel){
 		}, 
 
 		put : {
-
+			
 		},
 
 		delete : {
