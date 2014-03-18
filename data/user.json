@@ -16,7 +16,7 @@
 		"active"	: true,							
 		"referrer"	: null,
 		"is_system_admin"	: true,
-		"google_token" : "y82egbys7r010fh089sdonuqisd143qes987a",					
+		"google_refresh_token" : "y82egbys7r010fh089sdonuqisd143qes987a",					
 		"google_credentials":
 			{
 				"access_token"	: "",

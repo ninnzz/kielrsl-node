@@ -1,5 +1,6 @@
 var auth
-	, db = require(__dirname + "/../helpers/ndb");
+	, db = require(__dirname + "/../helpers/ndb")
+	, curl = require('request');
 
 auth = function(kiel){
 
@@ -7,19 +8,47 @@ auth = function(kiel){
 			db._instance().collection('user',function(err,_collection){
 				var crdntls = {}
 					, slctbl = {};
-				err && kiel.response(req, res, {data : err}, 404);
-				req.post_args.source === "google" && req.post_args.google_token && (crdntls = {email:req.post_args.email, google_token:req.post_args.gtoken});
-				req.post_args.source === "self" && req.post_args.password && (crdntls = {email:req.post_args.email, password: kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)});
-				slctbl = {"email":1,"profile_info":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
+				err && kiel.response(req, res, {data : err}, 500);
+
+				(req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
+				slctbl = {"email":1,"profile_info":1,"password":1,"google_refresh_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
 				slctbl[app.name+'_data'] = 1;
+				
+				if(Object.keys(crdntls).length === 0)
+					throw "Invalid credentials for login.";
 
 				_collection.find(crdntls,slctbl).toArray(function(err,d){
-					err && kiel.response(req, res, {data : err}, 404);
+					err && kiel.response(req, res, {data : err}, 500);
 					if(d.length === 1) {
-						kiel.logger("User identity confirmed: "+d[0]._id,'access')
-						kiel.response(req, res, {user_data : d[0],application_data:app}, 200);
+						req.post_args.source === "self" && d[0].password != kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
+						if(typeof er !== 'undefined'){
+							kiel.response(req, res, {data : er}, 500);
+							return;
+						}
+						if(req.post_args.source === "google" && req.post_args.google_access_token){
+							curl("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="+req.post_args.google_access_token ,function(err,rs,body){
+								if(!err && rs.statusCode == 200) {
+									var s = JSON.parse(body);
+									if(s.email !== d[0].email) {
+										kiel.response(req, res, {data : "Invalid access token for email."}, 500);
+										return;
+									} else {
+										kiel.logger("User identity confirmed [google]: "+d[0]._id,'access')
+										kiel.response(req, res, {user_data : d[0],application:app.id}, 200);
+									}
+
+								} else {
+									err || (err = "Cannot authenticate google access token, token might be expired or invalid.");
+									kiel.response(req, res, {data : err}, 500);
+									return;
+								}
+							});
+						} else {
+							kiel.logger("User identity confirmed [login]: "+d[0]._id,'access')
+							kiel.response(req, res, {user_data : d[0],application:app.id}, 200);
+						}
 					} else {
-						kiel.response(req, res, {data : "Username and password combination does not exist."}, 404);
+						kiel.response(req, res, {data : "That email does not belong to any account.", new_user : true}, 404);
 					}
 				});
 			});		
@@ -32,7 +61,11 @@ auth = function(kiel){
 					err && kiel.response(req, res, {data : err}, 404);
 					if(d.length === 1) {
 						if(d[0].valid_source.indexOf(req.post_args.source) > -1){
-							cb(req,res,d[0]);
+							try{
+								cb(req,res,d[0]);
+							} catch (err) {
+								kiel.response(req, res, {data : err}, 404);
+							}
 						} else {
 							kiel.response(req, res, {data : "Invalid source of request"}, 404);
 						}
@@ -61,13 +94,6 @@ auth = function(kiel){
 		},
 
 		post : {
-			register : function(req,res) {
-				
-				var rqrd = ['email','password','app_id'];
-				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 500);
-
-				kiel.response(req, res, {data :"registered"}, 200);
-			} ,
 			login : function(req,res) {
 				var rqrd = ['email','app_id','source'];
 				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 500);

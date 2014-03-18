@@ -67,7 +67,6 @@ mongoClient.connect([
 
 exports._instance = function()
 {
-	console.log('--------------------------------------------------------');
 	return db;
 }
 
