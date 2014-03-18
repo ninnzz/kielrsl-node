@@ -16,16 +16,13 @@ auth = function(kiel){
 				_collection.find(crdntls,slctbl).toArray(function(err,d){
 					err && kiel.response(req, res, {data : err}, 404);
 					if(d.length === 1) {
+						kiel.logger("User identity confirmed: "+d[0]._id,'access')
 						kiel.response(req, res, {user_data : d[0],application_data:app}, 200);
 					} else {
 						kiel.response(req, res, {data : "Username and password combination does not exist."}, 404);
 					}
-
-
 				});
 			});		
-
-
 		}
 		, find_app = function(err,req,res,cb) {
 
@@ -45,13 +42,6 @@ auth = function(kiel){
 				});
 			});
 		};
-
-
-
-
-
-
-
 
 	return {
 		get : {

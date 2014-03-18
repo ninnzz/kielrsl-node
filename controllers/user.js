@@ -5,7 +5,6 @@ var user = function(kiel){
 			index : function(req,res) {
 				
 				//example in loading the logs
-				kiel.logger("Finised exectuing users",'access');
 				//example in acessing the response
 				kiel.response(req, res, {data :"sample"}, 200);
 			}
