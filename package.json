@@ -5,9 +5,10 @@
     "author": "Nino Eclarin <nreclarin@gmail.com>",
     "contributors": [{ "name": "Nino Eclarin", "email": "nreclarin@gmail.com" },{ "name": "Raven Lagrimas", "email": "rjlagrimas08@gmail.com" }],
     "dependencies":  {
-        "mongodb"   : "*",
+        "mongodb": "~1.3.23",
         "mysql" : "*",
-        "mongoose" : "*"
+        "nodemon": "~1.0.15",
+        "googleapis": "~0.6.1"
         },
     "main" : "index.js",
     "engines": { "node": ">= 0.4.10" },
@@ -16,7 +17,7 @@
         "url": "https://github.com/pprmint/kielrsl-node.git"
     },
     "scripts" : {
-        "start" : "node index.js"
+        "start" : "nodemon index.js"
     },
     "keywords": [
         "JSON",

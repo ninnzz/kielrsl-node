@@ -17,8 +17,6 @@
  */
 console.log("User include files loaded");
 module.exports = {
-	mysql : require("mysql"),
-	mongoose : require("mongoose"),
 	//you can also declare a function that you want to use globally
 	foo : function(anycustom_parameter1, anycustom_parameter2){
 

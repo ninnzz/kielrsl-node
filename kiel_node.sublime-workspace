@@ -1,0 +1,891 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"req",
+				"required"
+			],
+			[
+				"er",
+				"earnings"
+			],
+			[
+				"reve",
+				"revenue"
+			],
+			[
+				"rev",
+				"revenue"
+			],
+			[
+				"channel",
+				"channel_id"
+			],
+			[
+				"in",
+				"include"
+			],
+			[
+				"con",
+				"config"
+			],
+			[
+				"glo",
+				"global_config"
+			],
+			[
+				"controller",
+				"controller_cache"
+			],
+			[
+				"listn",
+				"listener"
+			],
+			[
+				"obj",
+				"obj_name"
+			],
+			[
+				"path",
+				"path_components"
+			],
+			[
+				"ob",
+				"obj_name"
+			],
+			[
+				"url",
+				"url_parts"
+			],
+			[
+				"dlet",
+				"delete_args"
+			],
+			[
+				"applca",
+				"application_config"
+			],
+			[
+				"refeer",
+				"referrer"
+			],
+			[
+				"rep",
+				"reports"
+			],
+			[
+				"channe",
+				"channel_total"
+			],
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"get",
+				"get_channel"
+			],
+			[
+				"month",
+				"monthly"
+			],
+			[
+				"chann",
+				"channel_date_range"
+			],
+			[
+				"report",
+				"report_id"
+			],
+			[
+				"arra",
+				"array"
+			],
+			[
+				"total",
+				"total_earnings"
+			],
+			[
+				"chan",
+				"channel_id"
+			],
+			[
+				"error",
+				"errorUser"
+			],
+			[
+				"json",
+				"json_encode"
+			],
+			[
+				"conte",
+				"contentDetails"
+			],
+			[
+				"play",
+				"playlist_url"
+			],
+			[
+				"user",
+				"user_page"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "lib/kiel_auth.js",
+			"settings":
+			{
+				"buffer_size": 1793,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "README.md",
+			"settings":
+			{
+				"buffer_size": 3299,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/response.js",
+			"settings":
+			{
+				"buffer_size": 1383,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "config/database.js",
+			"settings":
+			{
+				"buffer_size": 277,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "",
+			"file": "helpers/ndb.js",
+			"file_size": 0,
+			"file_write_time": 130395157130000000,
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "helpers/utils.js",
+			"settings":
+			{
+				"buffer_size": 347,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "config/user_includes.js",
+			"settings":
+			{
+				"buffer_size": 678,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "controllers/user.js",
+			"settings":
+			{
+				"buffer_size": 2100,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "controllers/auth.js",
+			"settings":
+			{
+				"buffer_size": 439,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 925,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/ninz/Sites/auth/lib/utils.js",
+		"/Users/ninz/Sites/auth/config/application.js",
+		"/Users/ninz/Sites/auth/config/global_config.js",
+		"/Users/ninz/Sites/auth/.gitignore",
+		"/Users/ninz/Sites/auth/controllers/nicole.js",
+		"/Users/ninz/Desktop/channels (5).csv",
+		"/Users/ninz/Desktop/channels.csv",
+		"/Users/ninz/Downloads/feb_a.csv",
+		"/Users/ninz/Downloads/feb_m.csv",
+		"/Users/ninz/Downloads/youtube_payout_report_February 2014.csv",
+		"/Users/ninz/Downloads/YouTube_anytv_M_20140201_20140228_report.csv",
+		"/Users/ninz/Downloads/YouTube_anytv_affiliate_M_20140201_20140228_report.csv",
+		"/Users/ninz/Desktop/channels (1).csv",
+		"/Users/ninz/Desktop/channels (2).csv",
+		"/Users/ninz/Desktop/channels_2.csv",
+		"/Users/ninz/Desktop/channels_1.csv",
+		"/Users/ninz/Desktop/projects/freedom-mnl/app/config/database.php",
+		"/Users/ninz/Desktop/projects/freedom-mnl/app/main-routes.php",
+		"/Users/ninz/Desktop/youtube_payout_report_January 2014.csv",
+		"/Users/ninz/Desktop/network.csv",
+		"/Users/ninz/Downloads/youtube_payout_report_January 2014 (2).csv",
+		"/Users/ninz/Desktop/projects/freedom-mnl/vendor/phpoffice/phpexcel/Examples/Excel2003XMLReader.php",
+		"/Users/ninz/Desktop/projects/freedom-mnl/app/storage/views/e180d7009f22f307dddc6a053da0c206",
+		"/Users/ninz/Desktop/projects/freedom-mnl/app/views/help/my-account-dashboard.blade.php",
+		"/Users/ninz/Desktop/projects/heartbeat_chrome_ext/manifest.json",
+		"/Users/ninz/Desktop/recruiter.csv",
+		"/Users/ninz/Desktop/jan2.csv",
+		"/Users/ninz/Desktop/dec2.csv",
+		"/Users/ninz/Desktop/dec.csv",
+		"/Users/ninz/Desktop/projects/freedom-mnl/app/controllers/SuperAdminController.php",
+		"/Users/ninz/Desktop/jan.csv",
+		"/Users/ninz/Sites/auth/lib/response.js",
+		"/Users/ninz/Sites/auth/package.json",
+		"/Users/ninz/Sites/auth/index.js",
+		"/Users/ninz/Sites/auth/lib/logger.js",
+		"/Users/ninz/Downloads/YouTube_anytv_M_20131201_20131231_report-1.csv",
+		"/Users/ninz/Downloads/YouTube_anytv_M_20131201_20131231_report.csv",
+		"/Users/ninz/Sites/auth/lib/listener.js",
+		"/Users/ninz/Sites/auth/sample_return/user.json",
+		"/Users/ninz/Sites/auth/sample_return/activity.json",
+		"/Users/ninz/Sites/phpmyadmin/js/rte.js",
+		"/Users/ninz/Sites/auth/config/database.js",
+		"/Users/ninz/Sites/indexer/servers/indexer.js",
+		"/Users/ninz/Sites/indexer/servers/migrator.js",
+		"/Users/ninz/Sites/auth/user.json",
+		"/Users/ninz/Sites/indexer/package.json"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/ninz/Desktop/projects/freedom-mnl"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"listenere",
+			"listener",
+			"*",
+			"util",
+			"kiel",
+			"get_channe",
+			"channel earnings",
+			"**",
+			"download full repor",
+			"markee",
+			"channel_name",
+			"single_networ",
+			"console.log",
+			"KidDezzyHQ|Sk4zZi0uS",
+			"Sk4zZi0uS",
+			"F8slBQOGTvqjAhW7SjMAtg",
+			"group_",
+			"MANJULA Chatterjee",
+			",,MANJULA Chatterjee",
+			"MANJULA Chatterjee",
+			"qj16PSJLcCw",
+			"?????",
+			"\"",
+			"report",
+			"earnings_",
+			"order b",
+			"earnings_",
+			"('earnings",
+			"channel",
+			"partnersAcceptedWithAdmin",
+			"user_673,",
+			"user_673",
+			"673",
+			"67",
+			"673",
+			"channel",
+			"channel_revenue",
+			"date_range",
+			"get_all",
+			"console.log",
+			"307",
+			"overview",
+			"single",
+			"earningsContr",
+			"input",
+			"channel_rev",
+			"channel",
+			"recruiter_reve",
+			"console",
+			"307",
+			"total",
+			"recruiter_reve",
+			"get_for_range",
+			"single_recruiter",
+			"recruiter_revenue",
+			"channel_rev",
+			"get_for_range",
+			"network_reve",
+			"get_al",
+			"get_all",
+			"single_recruiter",
+			"h4",
+			"type",
+			"channel_reve",
+			"recruiter_reve",
+			"http",
+			"vmrptv",
+			"VMRPtv",
+			"application",
+			"url",
+			"response",
+			"url",
+			"body",
+			"memor",
+			"response",
+			"recruiter",
+			"user_264",
+			"missing channel",
+			"scopeOftype",
+			"ofType",
+			"scopeOfType",
+			"ofType",
+			"user_176",
+			"WithAdmin",
+			"ofStatusIn",
+			"ofStatusInW",
+			"ofStatus",
+			"Admin",
+			"$q",
+			"ofStatusIn",
+			"<?php foreach ($data['top10_list'] as $top_vid): ?>",
+			"user_112",
+			"channel_reven",
+			"175",
+			"id",
+			"user",
+			"network",
+			"if",
+			"print_r",
+			"networksAccepted",
+			"network_reve",
+			"network",
+			"db",
+			"networ",
+			"input",
+			"checker",
+			"export_revenue",
+			"export",
+			"checker",
+			"export",
+			"checker",
+			"get_report_intervals",
+			"Count",
+			"admi",
+			".getElementById(reports[er]).inn",
+			"select",
+			"getPermonth",
+			"li",
+			"referra",
+			"reffer",
+			"get_all",
+			"channel_reven",
+			"yt",
+			"gnxlj6eChfMn0Sif1rpFQQ",
+			"BlyiHysN0y4G5R0OxKZmqQ",
+			"ETcnotDdIpfOcTlsxLOsiw",
+			"Deserte",
+			"ETcnotDdIpfOcTlsxLOsiw"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"AIzaSyAz86gkdqDJVGZPC9RYqge3bEpk8ozde50"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 9,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "lib/kiel_auth.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1793,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								661,
+								661
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 219.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "README.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3299,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								871,
+								871
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/response.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1383,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								530,
+								530
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "config/database.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 277,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								269,
+								269
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "helpers/ndb.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "helpers/utils.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 347,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								302,
+								302
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "config/user_includes.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 678,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								678,
+								678
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "controllers/user.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2100,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1935,
+								1935
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 697.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "controllers/auth.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 439,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								365,
+								365
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 26.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 925,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								452,
+								452
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "kiel_node.sublime-project",
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"export",
+				"freedom-mnl/app/views/admin/super/export.blade.php"
+			],
+			[
+				"main",
+				"freedom-mnl/app/main-routes.php"
+			],
+			[
+				"channelcontr",
+				"app/controllers/ChannelController.php"
+			],
+			[
+				"networkmeme",
+				"app/Freedom/Repositories/NetworkMembersRepository.php"
+			],
+			[
+				"user",
+				"app/models/User.php"
+			],
+			[
+				"links",
+				"app/lang/en/links.php"
+			],
+			[
+				"usercontr",
+				"app/controllers/UserController.php"
+			],
+			[
+				"global",
+				"app/start/global.php"
+			],
+			[
+				"storage",
+				"vendor/google/api-client/examples/analytics/demo/storage.php"
+			],
+			[
+				"application",
+				"app/controllers/ApplicationController.php"
+			],
+			[
+				"partials.r",
+				"app/views/partials/reminders.blade.php"
+			],
+			[
+				"overview.blade.p",
+				"app/views/admin/overview.blade.php"
+			],
+			[
+				"overview.b",
+				"app/views/dashboard/partner/overview.blade.php"
+			],
+			[
+				"create_rev",
+				"app/database/migrations/2014_02_11_054923_create_revenue_share_table.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"~/freedom.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 908.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 233.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

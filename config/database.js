@@ -1,15 +1,16 @@
 
 var database = {
-	"mysql_earnings"	: {
+	mysql	: {
 		host     : 'localhost',
 		user     : 'root',
 		password : 'pepermint',
 		database : 'earnings_report'
 	},
-	"mysql_freedom"	: {
-		host     : 'localhost',
-		user     : 'root',
-		password : 'pepermint',
-		database : 'earnings_report'
+	mongodb	: {
+		name : "freedom",
+		host : "localhost",
+		port : 27017
 	}
 }
+
+module.exports = database;

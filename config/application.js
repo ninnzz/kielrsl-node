@@ -37,7 +37,13 @@ var application = {
 	 *
 	 */
 
-	"absolute_path"  : ""					
+	"absolute_path"  : "",
+
+	/**
+	 * SALT
+	 */
+	 "salt" : "c9d57c883aa42be96b9b063a266a4724"
+
 }
 console.log("Application config files loaded......");
 module.exports = application;
