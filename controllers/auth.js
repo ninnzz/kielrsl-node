@@ -16,9 +16,11 @@ auth = function(kiel){
 				
 				if(Object.keys(crdntls).length === 0)
 					throw "Invalid credentials for login.";
-
+				console.log(crdntls);
 				_collection.find(crdntls,slctbl).toArray(function(err,d){
 					err && kiel.response(req, res, {data : err}, 500);
+					console.log(d.length);
+					console.log(d);
 					if(d.length === 1) {
 						req.post_args.source === "self" && d[0].password != kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
 						if(typeof er !== 'undefined'){
@@ -64,13 +66,13 @@ auth = function(kiel){
 							try{
 								cb(req,res,d[0]);
 							} catch (err) {
-								kiel.response(req, res, {data : err}, 404);
+								kiel.response(req, res, {data : err}, 500);
 							}
 						} else {
-							kiel.response(req, res, {data : "Invalid source of request"}, 404);
+							kiel.response(req, res, {data : "Invalid source of request"}, 500);
 						}
 					} else {
-						kiel.response(req, res, {data : "Application Id does not exists."}, 404);
+						kiel.response(req, res, {data : "Application Id does not exists."}, 500);
 					}
 				});
 			});
@@ -98,6 +100,15 @@ auth = function(kiel){
 				var rqrd = ['email','app_id','source'];
 				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 500);
 				find_app(null,req,res,login_check);
+			} , 
+			logout : function(req,res) {
+
+			} ,
+			request_token : function(req,res) {
+
+			} ,
+			access_token : function (req,res) {
+
 			}
 		}, 
 
