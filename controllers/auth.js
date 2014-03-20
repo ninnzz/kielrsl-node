@@ -16,15 +16,14 @@ auth = function(kiel){
 				
 				if(Object.keys(crdntls).length === 0)
 					throw "Invalid credentials for login.";
-				console.log(crdntls);
+				
 				_collection.find(crdntls,slctbl).toArray(function(err,d){
 					err && kiel.response(req, res, {data : err}, 500);
-					console.log(d.length);
-					console.log(d);
+				
 					if(d.length === 1) {
 						req.post_args.source === "self" && d[0].password != kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
 						if(typeof er !== 'undefined'){
-							kiel.response(req, res, {data : er}, 500);
+							kiel.response(req, res, {data : er}, 400);
 							return;
 						}
 						if(req.post_args.source === "google" && req.post_args.google_access_token){
@@ -32,7 +31,7 @@ auth = function(kiel){
 								if(!err && rs.statusCode == 200) {
 									var s = JSON.parse(body);
 									if(s.email !== d[0].email) {
-										kiel.response(req, res, {data : "Invalid access token for email."}, 500);
+										kiel.response(req, res, {data : "Invalid access token for email."}, 400);
 										return;
 									} else {
 										kiel.logger("User identity confirmed [google]: "+d[0]._id,'access')
@@ -41,7 +40,7 @@ auth = function(kiel){
 
 								} else {
 									err || (err = "Cannot authenticate google access token, token might be expired or invalid.");
-									kiel.response(req, res, {data : err}, 500);
+									kiel.response(req, res, {data : err}, 400);
 									return;
 								}
 							});
@@ -58,9 +57,9 @@ auth = function(kiel){
 		, find_app = function(err,req,res,cb) {
 
 			db._instance().collection('app',function(err,_collection){
-				err && kiel.response(req, res, {data : err}, 404);
+				err && kiel.response(req, res, {data : err}, 500);
 				_collection.find({_id:req.post_args.app_id}).toArray(function(err,d){
-					err && kiel.response(req, res, {data : err}, 404);
+					err && kiel.response(req, res, {data : err}, 500);
 					if(d.length === 1) {
 						if(d[0].valid_source.indexOf(req.post_args.source) > -1){
 							try{
@@ -98,13 +97,17 @@ auth = function(kiel){
 		post : {
 			login : function(req,res) {
 				var rqrd = ['email','app_id','source'];
-				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 500);
+				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 400);
 				find_app(null,req,res,login_check);
 			} , 
 			logout : function(req,res) {
+				var rqrd = ['access_token','app_id'];
+				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 400);
 
 			} ,
 			request_token : function(req,res) {
+				var rqrd = ['app_id','scopes'];
+				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 400);
 
 			} ,
 			access_token : function (req,res) {
