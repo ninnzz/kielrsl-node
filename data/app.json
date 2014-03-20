@@ -4,6 +4,24 @@
 		"name"	: "freedom",
 		"descript"	: "Main flagship system for anytv. Will contain the dashboard for network and partners.",
 		"secret" : "704a857f886341eb7980a899b18a2687",
+		"scope_token" : "a5986070d58ba777f4897a045c56bb71",
+		"basic_scopes" : [
+				"web.view",
+				"mobile.view",
+				"self.view",
+				"self.edit",
+				"self.delete"
+			],
+		"valid_source"	: ["google","self"],
+		"created_at"	: 1395073747299,
+		"updated_at"	: 1395073747299
+	} , 
+	{
+		"_id"	: "831e4ee9529422134b4a010611601adf",									
+		"name"	: "heartbeat",
+		"descript"	: "Dating for youtubers.",
+		"secret" : "beaa4de45f5461ce8f638e76f48dd3c5",
+		"scope_token" : "d54246b63212e4cc763427433392f8f6",
 		"basic_scopes" : [
 				"web.view",
 				"mobile.view",

@@ -1,0 +1,11 @@
+[	
+	{
+		"_id"	: "665f627007666750b092f6a68396ed76",									
+		"request_token"	: "sample_request_token_here",
+		"user_id"	: "1",
+		"app_id" : "704a857f886341eb7980a899b18a2687",
+		"scopes" : [],
+		"expires"	: 1395073747299,
+		"created_at"	: 1395073747299
+	} 
+]

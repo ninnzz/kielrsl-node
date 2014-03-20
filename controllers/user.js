@@ -35,7 +35,7 @@ user = function(kiel){
 		//use md5 then decode later
 		usr['confirmation_token'] = kiel.utils.hash(kiel.application_config.salt+ '-email-' + req.post_args.email);
 
-		db._instance().collection('user',function(err,_collection){
+		db._instance().collection('users',function(err,_collection){
 			_collection.insert(usr, function (err) {
 				if (err) {
 					kiel.logger(err+" Failed to add user to db : "+usr._id,'db_debug');
@@ -53,9 +53,15 @@ user = function(kiel){
 	}
 	, valid_app = function(req,res) {
 		db._instance().collection('app',function(err,_collection){
-			err && kiel.response(req, res, {data : err}, 404);
+			if(err) {
+				kiel.response(req, res, {data : err}, 404);
+				return;
+			}
 			_collection.find({_id:req.post_args.app_id}).toArray(function(err,d){
-				err && kiel.response(req, res, {data : err}, 404);
+				if(err) {
+					kiel.response(req, res, {data : err}, 404);
+					return;
+				}
 				if(d.length === 1) {
 					try{
 						input_user(req,res,d[0]);
@@ -81,10 +87,15 @@ user = function(kiel){
 		post : {
 			register : function(req,res) {
 				var rqrd = ['email','password','app_id','fname','lname','birthdate'];
-				kiel.utils.required_fields(rqrd,req.post_args) || kiel.response(req, res, {data : "Missing fields"}, 500);
-
-				db._instance().collection('user',function(err,_collection){
-					err && kiel.response(req, res, {data : err}, 500);
+				if(!kiel.utils.required_fields(rqrd,req.post_args)){
+					kiel.response(req, res, {data : "Missing fields"}, 500);
+					return;
+				}
+				db._instance().collection('users',function(err,_collection){
+					if(err){
+						kiel.response(req, res, {data : err}, 500);
+						return;
+					}
 					_collection.find({email:req.post_args.email}).toArray(function(err,d){
 						if(d.length > 0){
 							kiel.response(req, res, {data :"Email is already associated with an existing account."}, 400);

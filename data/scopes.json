@@ -1,0 +1,68 @@
+[	
+	{
+		"description"	: "Basic web view for freedom.",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.web.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Basic web view for freedom in mobile.",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.mobile.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can view own profile.",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.self.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can edit own profile.",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.self.edit",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can deactivate own account",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.self.delete",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can view other people's profile",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.user.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can edit other people's profile",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.user.edit",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can delete other people's profile",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.user.delete",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can create a new user",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.user.create",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can view people's channel list",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.channel.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can edit people's channel list",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.channel.edit",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can delete people's channel list",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.channel.delete",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can add a new channel",
+		"scope"			: "a5986070d58ba777f4897a045c56bb71.channel.create",
+		"created_at"	: 1395073747299
+	} 
+
+]

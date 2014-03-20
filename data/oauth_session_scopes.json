@@ -1,6 +1,6 @@
 [	
 	{
-		"access_token"	: "sampleaccesstokengoeshere"
+		"access_token"	: "sampleaccesstokengoeshere",
 		"scope"			: "665f627007666750b092f6a68396ed76.user.edit",
 		"created_at"	: 1395073747299
 	}
