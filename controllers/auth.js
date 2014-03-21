@@ -27,7 +27,7 @@ auth = function(kiel){
 						return;
 					}
 					if(d.length === 1) {
-						// console.log(d[0]);
+						console.log(d[0]);
 						req.post_args.source === "self" && d[0].password != kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
 						if(typeof er !== 'undefined'){
 							kiel.response(req, res, {data : er}, 400);

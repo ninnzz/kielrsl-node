@@ -79,6 +79,7 @@ steam = function(kiel){
 				});
 			});
 		}
+		, get_game_achv_stats
 	return {
 		get : {
 			dota2 : function(req,res) {
