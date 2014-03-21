@@ -10,8 +10,8 @@ steam = function(kiel){
 		, key = 'F7551A7B6F9F08F73CE6B16EAE848DF5'
 		, recently_played 	= "http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=F7551A7B6F9F08F73CE6B16EAE848DF5&format=json&steamid="
 		, owned_games 		= "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=F7551A7B6F9F08F73CE6B16EAE848DF5&format=json&steamid="
-		, game_user_stats	= "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=[appid]&key=F7551A7B6F9F08F73CE6B16EAE848DF5&steamid="				//stats and achvments per game
-		, game_achievements	= "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=[appid]&key=F7551A7B6F9F08F73CE6B16EAE848DF5&steamid="			//all achvments per game per user, can show how many achvments are left
+		, game_user_stats	= "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=570&key=F7551A7B6F9F08F73CE6B16EAE848DF5&steamid="				//stats and achvments per game
+		, game_achievements	= "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=570&key=F7551A7B6F9F08F73CE6B16EAE848DF5&steamid="			//all achvments per game per user, can show how many achvments are left
 		, game_achv_stats	= "http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?format=json&gameid="
 		, user_level		= "http://api.steampowered.com/IPlayerService/GetSteamLevel/v1?key=F7551A7B6F9F08F73CE6B16EAE848DF5&steamid="
 		, get_recent_played = function() {
@@ -31,10 +31,60 @@ steam = function(kiel){
 				});
 			});
 		}
+		, get_owned_games = function() {
+			user_ids.forEach(function(val,index){
+				curl(owned_games+val ,function(err,rs,body){
+					if(!err && rs.statusCode == 200){
+						body = JSON.parse(body);
+						body['_id'] = val;
+						body['created_at'] = d.getTime();
+						db._instance().collection('owned_games', function(err,_collection) {
+							if(!err){
+								_collection.insert(body,function(err){kiel.logger(d.getTime()+' Failed to mine:'+err,'steam_debug')});
+							}
+						});
+					}	
+				});
+			});
+		}
+		, get_game_user_stats = function() {
+			user_ids.forEach(function(val,index){
+				curl(game_user_stats+val ,function(err,rs,body){
+					if(!err && rs.statusCode == 200){
+						body = JSON.parse(body);
+						body['_id'] = val;
+						body['created_at'] = d.getTime();
+						db._instance().collection('game_user_stats', function(err,_collection) {
+							if(!err){
+								_collection.insert(body,function(err){kiel.logger(d.getTime()+' Failed to mine:'+err,'steam_debug')});
+							}
+						});
+					}	
+				});
+			});
+		}
+		, get_game_achievements = function() {
+			user_ids.forEach(function(val,index){
+				curl(game_achievements+val ,function(err,rs,body){
+					if(!err && rs.statusCode == 200){
+						body = JSON.parse(body);
+						body['_id'] = val;
+						body['created_at'] = d.getTime();
+						db._instance().collection('game_achievements', function(err,_collection) {
+							if(!err){
+								_collection.insert(body,function(err){kiel.logger(d.getTime()+' Failed to mine:'+err,'steam_debug')});
+							}
+						});
+					}	
+				});
+			});
+		}
 	return {
 		get : {
 			dota2 : function(req,res) {
 				get_recent_played();
+				get_owned_games();
+				get_game_user_stats();
 				kiel.response(req, res, {data : "running"}, 200);
 			} ,
 			lol : 	function(req,res) {

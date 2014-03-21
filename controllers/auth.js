@@ -106,8 +106,6 @@ auth = function(kiel){
 					});
 				});
 			});
-
-
 		}
 		, generate_request_token = function(req,res,app) {
 			db._instance().collection('users',function(err,_collection){
@@ -158,6 +156,39 @@ auth = function(kiel){
 					}
 				});
 			});
+		}
+		, save_access_token = function(req,res,request_token) {
+			db._instance().collection('access_tokens',function(err,_collection) {
+				if(err) {
+					kiel.response(req, res, {data : err}, 500);
+					return;
+				}
+				_collection.find({user_id:req.get_args.user_id})	
+			});
+		}
+		, generate_access_token = function(req,res) {
+			db._instance().collection('request_tokens', function(err,_collection) {
+				if(err) {
+					kiel.response(req, res, {data : err}, 500);
+					return;
+				}	
+				_collection.find({request_token:req.get_args.request_token}).toArray(function(err,d) {
+					if(err) {
+						kiel.response(req, res, {data : err}, 500);
+						return;
+					}	
+					var dt = new Date();
+					/******TODO******/
+					/*** Create a cron job to clear expired and unused request token ***/
+					if(d.length !== 1 || d[0].app_id !== req.get_args.app_id || d[0].user_id !== req.get_args.user_id || d[0].expires <= dt.getTime()) {
+						kiel.response(req, res, {data : "Invalid/Expired request token."}, 404);
+						return;						
+					} else {
+						save_access_token(req,res,d[0]);
+					}
+
+				});
+			});
 		};
 
 	return {
@@ -185,7 +216,12 @@ auth = function(kiel){
 				find_app(null,req,res,req.get_args.app_id,generate_request_token);
 			} ,
 			access_token : function (req,res) {
-
+				var rqrd = ['app_id','request_token','user_id'];
+				if(!kiel.utils.required_fields(rqrd,req.get_args)) {
+					kiel.response(req, res, {data : "Missing fields"}, 400);
+					return;
+				}
+				generate_access_token(req,res);
 			}
 		},
 
