@@ -79,19 +79,47 @@ steam = function(kiel){
 				});
 			});
 		}
-		, get_game_achv_stats
+		, get_game_achv_stats = function() {
+			curl(game_achv_stats+570 ,function(err,rs,body){
+				if(!err && rs.statusCode == 200){
+					body = JSON.parse(body);
+					body['_id'] = 570;
+					body['created_at'] = d.getTime();
+					db._instance().collection('game_achv_stats', function(err,_collection) {
+						if(!err){
+							_collection.insert(body,function(err){kiel.logger(d.getTime()+' Failed to mine:'+err,'steam_debug')});
+						}
+					});
+				}	
+			});
+		}
+		, get_user_level = function() {
+			user_ids.forEach(function(val,index){
+				curl(user_level+val ,function(err,rs,body){
+					if(!err && rs.statusCode == 200){
+						body = JSON.parse(body);
+						body['_id'] = val;
+						body['created_at'] = d.getTime();
+						db._instance().collection('user_level', function(err,_collection) {
+							if(!err){
+								_collection.insert(body,function(err){kiel.logger(d.getTime()+' Failed to mine:'+err,'steam_debug')});
+							}
+						});
+					}	
+				});
+			});
+		};
 	return {
 		get : {
 			dota2 : function(req,res) {
 				get_recent_played();
 				get_owned_games();
 				get_game_user_stats();
+				get_game_achievements();
+				get_game_achv_stats();
+				get_user_level();
 				kiel.response(req, res, {data : "running"}, 200);
 			} ,
-			lol : 	function(req,res) {
-
-			}
-
 		}
 	}
 }

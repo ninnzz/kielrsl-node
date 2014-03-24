@@ -27,7 +27,6 @@ auth = function(kiel){
 						return;
 					}
 					if(d.length === 1) {
-						console.log(d[0]);
 						req.post_args.source === "self" && d[0].password != kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
 						if(typeof er !== 'undefined'){
 							kiel.response(req, res, {data : er}, 400);
@@ -157,13 +156,102 @@ auth = function(kiel){
 				});
 			});
 		}
+		, insert_access_token = function(req,res,request_token,_collection,ac) {
+			var dt = new Date()
+				, oauth_scopes = []
+				, access_token = {
+					user_id : req.get_args.user_id,
+					app_id	: req.get_args.app_id,
+					access_token : ac,
+					expires : 0,
+					created_at : dt.getTime()
+				};
+
+			request_token.scopes.forEach(function(sc) {
+				oauth_scopes.push({'access_token': access_token.access_token,'app_id':access_token.app_id, 'scope':sc.scope,'created_at':dt.getTime()});
+			});
+			_collection.insert(access_token,function(err) {
+				if(err) {
+					kiel.response(req, res, {data : err}, 500);
+					return;
+				}
+				db._instance().collection('request_tokens',function(err,_collection) {
+					_collection.remove({request_token:request_token.request_token},function(err,d){
+						if(err) {
+							kiel.logger('Failed deleting request_token: '+request_token.request_token,'db_debug');
+							return;
+						}
+						kiel.logger('Deleted request_token: '+request_token.request_token,'db_debug');
+					})
+				});
+				db._instance().collection('oauth_session_scopes',function(err,_collection){
+					if(err) {
+						kiel.logger('Failed Loading the scopes for access_token: '+access_token.access_token,'db_debug');
+						return;
+					}
+					_collection.insert(oauth_scopes,function(err){
+						if(err) {
+							kiel.logger('Failed saving oauth_scopes: '+access_token.access_token,'db_debug');
+							return;
+						}
+					});
+				});
+				kiel.response(req, res, {access_token : access_token.access_token, expires:access_token.expires}, 200);
+			});
+		}
 		, save_access_token = function(req,res,request_token) {
 			db._instance().collection('access_tokens',function(err,_collection) {
 				if(err) {
 					kiel.response(req, res, {data : err}, 500);
 					return;
-				}
-				_collection.find({user_id:req.get_args.user_id})	
+				}	
+				_collection.find({user_id:req.get_args.user_id}).toArray(function(err,d) {
+					if(err) {
+						kiel.response(req, res, {data : err}, 500);
+						return;
+					}
+					var dt = new Date()
+						, ac = kiel.utils.hash(req.get_args.request_token + dt.getTime()) + kiel.utils.hash(req.get_args.user_id + kiel.utils.random());
+					if(d.length === 0) {
+						//if there are totally no access token for the user
+						insert_access_token(req,res,request_token,_collection,ac);	
+					} else {
+						var crd = null;
+						for(var i=0; i<d.length;i++) {
+							if(req.get_args.app_id === d[i].app_id) {
+								crd = {};
+								//stop at here
+								crd['app_id'] = d[i].app_id;
+								crd['access_token'] = d[i].access_token;
+								break;
+							}
+						}
+						if(crd === null) {
+							//adds another application
+							insert_access_token(req,res,request_token,_collection,d[0].access_token);
+						} else {
+							var access_token_collection = _collection;
+							db._instance().collection('oauth_session_scopes',function(err,_collection) {
+								_collection.remove(crd,function(err,d) {
+									if(err) {
+										kiel.response(req, res, {data : err}, 500);
+										return;
+									}
+									access_token_collection.remove(crd,function(err,d){
+										if(err) {
+											kiel.response(req, res, {data : err}, 500);
+											return;
+										}
+										insert_access_token(req,res,request_token,access_token_collection,crd.access_token);
+									});
+								});
+							});
+						}
+						console.log(d.length);
+						console.log(crd);
+					}
+
+				});	
 			});
 		}
 		, generate_access_token = function(req,res) {
