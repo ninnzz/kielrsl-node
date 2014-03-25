@@ -17,6 +17,7 @@ user = function(kiel){
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
 		req.post_args.fname 		&& (usr.profile_info['fname'] = req.post_args.fname );
 		req.post_args.lname 		&& (usr.profile_info['lname'] = req.post_args.lname );
+		req.post_args.avatar 		&& (usr.profile_info['avatar'] = req.post_args.avatar );
 		req.post_args.birthday 		&& (usr.profile_info['birthdate'] = req.post_args.birthdate );
 		req.post_args.skype 		&& (usr.contact_info['skype'] = req.post_args.skype );
 		req.post_args.google_refresh_token 	&& (usr['google_refresh_token'] = req.post_args.google_refresh_token );
