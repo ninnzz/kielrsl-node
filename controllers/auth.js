@@ -29,6 +29,8 @@ auth = function(kiel){
 					}
 					if(d.length === 1) {
 						req.post_args.source === "self" && d[0].password !== kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
+						console.log(er);
+						console.log(req.post_args.source === "self" && d[0].password !== kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match."));
 						if(er){
 							kiel.response(req, res, {data : er}, 400);
 							return;
