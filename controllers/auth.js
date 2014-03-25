@@ -9,7 +9,8 @@ auth = function(kiel){
 				throw "Invalid source for a request";
 			db._instance().collection('users',function(err,_collection){
 				var crdntls = {}
-					, slctbl = {};
+					, slctbl = {}
+					, er = null;
 				if(err){
 					kiel.response(req, res, {data : err}, 500);
 					return;
@@ -27,8 +28,8 @@ auth = function(kiel){
 						return;
 					}
 					if(d.length === 1) {
-						req.post_args.source === "self" && d[0].password != kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
-						if(typeof er !== 'undefined'){
+						req.post_args.source === "self" && d[0].password !== kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
+						if(er){
 							kiel.response(req, res, {data : er}, 400);
 							return;
 						}
