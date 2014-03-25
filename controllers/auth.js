@@ -51,7 +51,7 @@ auth = function(kiel){
 										delete d[0].password;
 										delete d[0].google_access_token;
 										kiel.logger("User identity confirmed [google]: "+d[0]._id,'access')
-										kiel.response(req, res, {user_data : d[0],application:app.id}, 200);
+										kiel.response(req, res, {user_data : d[0],scope_token:app.scope_token}, 200);
 									}
 
 								} else {
