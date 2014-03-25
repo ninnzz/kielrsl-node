@@ -15,7 +15,7 @@ auth = function(kiel){
 					return;
 				}
 				(req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
-				slctbl = {"email":1,"profile_info":1,"password":1,"google_refresh_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
+				slctbl = {"email":1,"profile_info":1,"password":1,"google_access_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
 				slctbl[app.name+'_data'] = 1;
 				
 				if(Object.keys(crdntls).length === 0)
@@ -40,6 +40,13 @@ auth = function(kiel){
 										kiel.response(req, res, {data : "Invalid access token for email."}, 400);
 										return;
 									} else {
+										//add app if user of new app
+										if(!d[0][app.name+'_data']) {
+											add_app(_collection,app,d[0]);
+											d[0][app.name+'_data'] = {user_scopes:app.basic_scopes};
+										}
+										delete d[0].password;
+										delete d[0].google_access_token;
 										kiel.logger("User identity confirmed [google]: "+d[0]._id,'access')
 										kiel.response(req, res, {user_data : d[0],application:app.id}, 200);
 									}
@@ -51,6 +58,13 @@ auth = function(kiel){
 								}
 							});
 						} else {
+							//add app if user of new app
+							if(!d[0][app.name+'_data']) {
+								add_app(_collection,app,d[0]);
+								d[0][app.name+'_data'] = {user_scopes:app.basic_scopes};
+							}
+							delete d[0].password;
+							delete d[0].google_access_token;
 							kiel.logger("User identity confirmed [login]: "+d[0]._id,'access')
 							kiel.response(req, res, {user_data : d[0],scope_token:app.scope_token}, 200);
 						}
@@ -59,6 +73,15 @@ auth = function(kiel){
 					}
 				});
 			});		
+		}
+		, add_app = function(user_collection,app,user) {
+			console.log('added new scopes');
+			var crd = {};
+			crd[app.name+'_data'] = {user_scopes:app.basic_scopes};
+			user_collection.update({_id:user._id}, {'$set':crd},function(err,d) {
+				console.log(err);
+				console.log(d);
+			});
 		}
 		, find_app = function(err,req,res,app_id,cb) {
 			db._instance().collection('app',function(err,_collection){
@@ -247,8 +270,6 @@ auth = function(kiel){
 								});
 							});
 						}
-						console.log(d.length);
-						console.log(crd);
 					}
 
 				});	
@@ -282,7 +303,7 @@ auth = function(kiel){
 	return {
 		get : {
 			import : function(req,res) {
-				db.imports(null,['users','app','scopes']);
+				db.imports(null,['app','scopes']);
 				kiel.response(req, res, {data : "Import process started. See logs and server message"}, 200);
 				// kiel.response(req, res, {data : kiel.utils.hash('831e4ee9529422134b4a010611601adf-beaa4de45f5461ce8f638e76f48dd3c5')}, 200);
 		
