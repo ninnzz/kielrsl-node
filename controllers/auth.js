@@ -304,7 +304,7 @@ auth = function(kiel){
 	return {
 		get : {
 			import : function(req,res) {
-				db.imports(null,['app','scopes']);
+				db.imports(null,['users','app','scopes']);
 				kiel.response(req, res, {data : "Import process started. See logs and server message"}, 200);
 				// kiel.response(req, res, {data : kiel.utils.hash('831e4ee9529422134b4a010611601adf-beaa4de45f5461ce8f638e76f48dd3c5')}, 200);
 		
