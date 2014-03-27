@@ -20,7 +20,7 @@ steam = function(kiel){
 				curl(recently_played+val ,function(err,rs,body){
 					if(!err && rs.statusCode == 200){
 						body = JSON.parse(body);
-						body['_id'] = val;
+						body['user_id'] = val;
 						body['created_at'] = d.getTime();
 						db._instance().collection('recent_played', function(err,_collection) {
 							if(!err){
@@ -36,7 +36,7 @@ steam = function(kiel){
 				curl(owned_games+val ,function(err,rs,body){
 					if(!err && rs.statusCode == 200){
 						body = JSON.parse(body);
-						body['_id'] = val;
+						body['user_id'] = val;
 						body['created_at'] = d.getTime();
 						db._instance().collection('owned_games', function(err,_collection) {
 							if(!err){
@@ -52,7 +52,7 @@ steam = function(kiel){
 				curl(game_user_stats+val ,function(err,rs,body){
 					if(!err && rs.statusCode == 200){
 						body = JSON.parse(body);
-						body['_id'] = val;
+						body['user_id'] = val;
 						body['created_at'] = d.getTime();
 						db._instance().collection('game_user_stats', function(err,_collection) {
 							if(!err){
@@ -68,7 +68,7 @@ steam = function(kiel){
 				curl(game_achievements+val ,function(err,rs,body){
 					if(!err && rs.statusCode == 200){
 						body = JSON.parse(body);
-						body['_id'] = val;
+						body['user_id'] = val;
 						body['created_at'] = d.getTime();
 						db._instance().collection('game_achievements', function(err,_collection) {
 							if(!err){
@@ -83,7 +83,7 @@ steam = function(kiel){
 			curl(game_achv_stats+570 ,function(err,rs,body){
 				if(!err && rs.statusCode == 200){
 					body = JSON.parse(body);
-					body['_id'] = 570;
+					body['user_id'] = 570;
 					body['created_at'] = d.getTime();
 					db._instance().collection('game_achv_stats', function(err,_collection) {
 						if(!err){
@@ -98,7 +98,7 @@ steam = function(kiel){
 				curl(user_level+val ,function(err,rs,body){
 					if(!err && rs.statusCode == 200){
 						body = JSON.parse(body);
-						body['_id'] = val;
+						body['user_id'] = val;
 						body['created_at'] = d.getTime();
 						db._instance().collection('user_level', function(err,_collection) {
 							if(!err){
