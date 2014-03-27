@@ -1,4 +1,5 @@
 [	
+
 	{
 		"description"	: "Basic web view for freedom.",
 		"scope"			: "a5986070d58ba777f4897a045c56bb71.web.view",
@@ -63,6 +64,38 @@
 		"description"	: "Can add a new channel",
 		"scope"			: "a5986070d58ba777f4897a045c56bb71.channel.create",
 		"created_at"	: 1395073747299
-	} 
+	},
+
+
+	{
+		"description"	: "Basic web view for heartbeat.",
+		"scope"			: "d54246b63212e4cc763427433392f8f6.web.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Basic web view for freedom in mobile heartbeat.",
+		"scope"			: "d54246b63212e4cc763427433392f8f6.mobile.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can view own profile heartbeat.",
+		"scope"			: "d54246b63212e4cc763427433392f8f6.self.view",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can edit own profile heartbeat.",
+		"scope"			: "d54246b63212e4cc763427433392f8f6.self.edit",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can deactivate own account heartbeat",
+		"scope"			: "d54246b63212e4cc763427433392f8f6.self.delete",
+		"created_at"	: 1395073747299
+	} ,
+	{
+		"description"	: "Can view other people's profile heartbeat",
+		"scope"			: "d54246b63212e4cc763427433392f8f6.user.view",
+		"created_at"	: 1395073747299
+	}
 
 ]

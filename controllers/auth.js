@@ -2,6 +2,8 @@ var auth
 	, db = require(__dirname + "/../helpers/ndb")
 	, curl = require('request');
 
+
+
 auth = function(kiel){
 
 	var login_check = function(req,res,app){
@@ -123,10 +125,7 @@ auth = function(kiel){
 						return;
 					}
 					_collection.insert(r_token_object, function (err) { 
-						if(err) {
-							kiel.response(req, res, {data : err}, 500);
-							return;
-						}
+						if(err) { kiel.response(req, res, {data : err}, 500);return;}
 						kiel.response(req, res, {request_token : r_token_object.request_token, expires : r_token_object.expires}, 200);
 					});
 				});
@@ -148,7 +147,7 @@ auth = function(kiel){
 							try {
 								var scps = [];
 								(req.get_args.scopes.split(',')).forEach(function(sc) {
-									scps.push({scope: req.get_args.scope_token+'.'+sc })
+									scps.push({scope: req.get_args.scope_token+'.'+sc });
 								});
 
 								db._instance().collection('scopes',function(err,_collection) {
@@ -254,7 +253,7 @@ auth = function(kiel){
 						}
 						if(crd === null) {
 							//adds another application
-							insert_access_token(req,res,request_token,_collection,d[0].access_token);
+							insert_access_token(req,res,request_token,_collection,ac);
 						} else {
 							var access_token_collection = _collection;
 							db._instance().collection('oauth_session_scopes',function(err,_collection) {
@@ -274,7 +273,6 @@ auth = function(kiel){
 							});
 						}
 					}
-
 				});	
 			});
 		}
@@ -306,7 +304,7 @@ auth = function(kiel){
 	return {
 		get : {
 			import : function(req,res) {
-				db.imports(null,['users','app','scopes']);
+				db.imports(null,['app','scopes']);
 				kiel.response(req, res, {data : "Import process started. See logs and server message"}, 200);
 				// kiel.response(req, res, {data : kiel.utils.hash('831e4ee9529422134b4a010611601adf-beaa4de45f5461ce8f638e76f48dd3c5')}, 200);
 		
@@ -352,6 +350,23 @@ auth = function(kiel){
 					kiel.response(req, res, {data : "Missing fields"}, 400);
 					return;
 				}
+				db._instance().collection('access_tokens',function(err,_collection) {
+					if(!kiel.utils.required_fields(rqrd,req.post_args)) {
+						kiel.response(req, res, {data : "Missing fields"}, 400);
+						return;
+					}
+					_collection.remove({access_token:req.post_args.access_token}, function(err,d) {
+						if(!kiel.utils.required_fields(rqrd,req.post_args)) {
+							kiel.response(req, res, {data : "Missing fields"}, 400);
+							return;
+						}
+						db._instance().collection('oauth_session_scopes',function(err,_collection) {
+							_collection.remove({access_token:req.post_args.access_token}, function(err,d) {
+							});
+						});
+						kiel.response(req, res, {logged_out:true}, 200);
+					});
+				});
 			} 
 		}, 
 

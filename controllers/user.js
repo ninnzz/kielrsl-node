@@ -54,10 +54,8 @@ user = function(kiel){
 	}
 	, valid_app = function(req,res) {
 		db._instance().collection('app',function(err,_collection){
-			if(err) {
-				kiel.response(req, res, {data : err}, 404);
-				return;
-			}
+			if(err) { kiel.response(req, res, {data : err}, 404);return;}
+
 			_collection.find({_id:req.post_args.app_id}).toArray(function(err,d){
 				if(err) {
 					kiel.response(req, res, {data : err}, 404);
@@ -80,8 +78,35 @@ user = function(kiel){
 	return {
 		get : {
 			index : function(req,res) {
+				var rqrd = ['access_token']
+					,scopes;
+				if(!kiel.utils.required_fields(rqrd,req.get_args)){
+					kiel.response(req, res, {data : "Missing fields"}, 500);
+					return;
+				}
+				((req.get_args.self && (scopes = ['self.view'])) || (scopes = ['user.view']) );
 				
-				kiel.response(req, res, {data :"sample"}, 200);
+				if(!req.get_args.self && !req.get_args.user_id) {
+					kiel.response(req, res, {data : "Missing user_id"}, 404);
+					return;
+				}
+
+				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
+					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
+					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
+					db._instance().collection('users',function(err,_collection) {
+						if(err){ kiel.response(req, res, {data : err}, 500); return;}
+						_collection.find({_id:d.user_id},selectables).toArray(function(err,user) {
+							if(err){ kiel.response(req, res, {data : err}, 500); return;}
+							if(user.length === 1) {
+								kiel.response(req, res, {user_data:user[0]}, 200);
+								return;
+							} else {
+								kiel.response(req, res, {data :"User not found."}, 404);		
+							}
+						});
+					});
+				});
 			}
 		},
 
@@ -93,10 +118,7 @@ user = function(kiel){
 					return;
 				}
 				db._instance().collection('users',function(err,_collection){
-					if(err){
-						kiel.response(req, res, {data : err}, 500);
-						return;
-					}
+					if(err){ kiel.response(req, res, {data : err}, 500); return;}
 					_collection.find({email:req.post_args.email}).toArray(function(err,d){
 						if(d.length > 0){
 							kiel.response(req, res, {data :"Email is already associated with an existing account."}, 400);
@@ -114,7 +136,74 @@ user = function(kiel){
 		}, 
 
 		put : {
+			/***TODO***/
+			// Will add the editable function for each use model later.
+			index : function(req,res) {
+				var rqrd = ['user_id','access_token'];
+				if(!kiel.utils.required_fields(rqrd,req.put_args)){
+					kiel.response(req, res, {data : "Missing fields"}, 500);
+					return;
+				}
+				kiel.utils.has_scopes(['self.edit','web.view'],req.put_args.access_token,function(err){
+					if(err){ kiel.response(req, res, {data : err.message}, err.rsponse_code); return; }	
+					db._instance().collection('users',function(err,_collection){
+						if(err) {callback({message:err,response_code:500});return;}
+						_collection.find({_id:req.put_args.user_id}).toArray(function(err,user) {
+							if(err) { kiel.response(req, res, {data : err}, 500);return;}
+							if(user.length === 0) {
+								kiel.response(req, res, {data : "User not found."}, 404);
+							} else {
+								var usr = user[0]
+									,dt = new Date();
 
+								req.put_args.password 			&& (usr.profile_info['password'] = kiel.utils.hash(kiel.utils.hash(req.put_args.password) + kiel.application_config.salt) );
+								req.put_args.fname 				&& (usr.profile_info['fname'] = req.put_args.fname );
+								req.put_args.lname 				&& (usr.profile_info['lname'] = req.put_args.lname );
+								req.put_args.avatar 			&& (usr.profile_info['avatar'] = req.put_args.avatar );
+								req.put_args.paypal 			&& (usr.profile_info['paypal'] = req.put_args.paypal );
+								req.put_args.custom_url 		&& (usr.profile_info['custom_url'] = req.put_args.custom_url );
+								req.put_args.birthday 			&& (usr.profile_info['birthdate'] = req.put_args.birthdate );
+								req.put_args.skype 				&& (usr.contact_info['skype'] = req.put_args.skype );
+								req.put_args.facebook 			&& (usr.contact_info['facebook'] = req.put_args.facebook );
+								req.put_args.twitter 			&& (usr.contact_info['twitter'] = req.put_args.twitter );
+								req.put_args.phones 			&& (usr.contact_info['phones'] = req.put_args.phones );
+								req.put_args.google_refresh_token 	&& (usr['google_refresh_token'] = req.put_args.google_refresh_token );
+								req.put_args.street_address			&& (usr.contact_info.address['street_address'] = req.put_args.street_address );
+								req.put_args.city				&& (usr.contact_info.address['city'] = req.put_args.city );
+								req.put_args.state				&& (usr.contact_info.address['state'] = req.put_args.state );
+								req.put_args.country			&& (usr.contact_info.address['country'] = req.put_args.country );
+								req.put_args.postal_code			&& (usr.contact_info.address['postal_code'] = req.put_args.putal_code );
+								req.put_args.referrer			&& (usr['referrer'] = req.put_args.referrer );
+								usr.profile_info['updated_at'] = dt.getTime();
+								
+								_collection.update({_id:req.put_args.user_id}, usr,function(err,d) {
+									if(err) { kiel.response(req, res, {data : err}, 500);return;}
+									if(d === 1) {
+										var ret = {
+											_id : usr._id,
+											email : usr.email,
+											profile_info : usr.profile_info,
+											email_confirmed : usr.email_confirmed,
+											email_confirmed : usr.email_confirmed,
+											active : usr.active,
+											referrer : usr.referrer,
+											is_system_admin : usr.is_system_admin,
+											contact_info : usr.contact_info,
+											created_at : usr.created_at,
+											updated_at : usr.updated_at
+										};
+										kiel.response(req, res, {user_data : ret}, 200);
+										return;
+									} else {
+										kiel.response(req, res, {data : "Failed in updating user info."}, 401);
+										return;
+									}
+								});
+							}
+						});
+					});
+				});
+			}
 		},
 
 		delete : {
