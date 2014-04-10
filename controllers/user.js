@@ -7,7 +7,12 @@ user = function(kiel){
 	var input_user = function(req,res,app) {
 		var usr = {}
 			, d = new Date();
-		
+				
+		/*** IMPORTANT ***/
+		// for new projects that wants to use the user class, add your own custom user implementation here
+		// you can create or use the existing user function just redefine the fields of your user object
+
+
 		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
 		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
@@ -136,19 +141,20 @@ user = function(kiel){
 		}, 
 
 		put : {
-			/***TODO***/
-			// Will add the editable function for each use model later.
 			index : function(req,res) {
-				var rqrd = ['user_id','access_token'];
+				var rqrd = ['access_token']
+					, user_id;
 				if(!kiel.utils.required_fields(rqrd,req.put_args)){
 					kiel.response(req, res, {data : "Missing fields"}, 500);
 					return;
 				}
-				kiel.utils.has_scopes(['self.edit','web.view'],req.put_args.access_token,function(err){
+				//checks the access token to proper edit mapping. Allows user to only edit themselves
+				kiel.utils.has_scopes(['self.edit','web.view'],req.put_args.access_token,function(err,data){
 					if(err){ kiel.response(req, res, {data : err.message}, err.rsponse_code); return; }	
+					user_id = data.user_id;
 					db._instance().collection('users',function(err,_collection){
 						if(err) {callback({message:err,response_code:500});return;}
-						_collection.find({_id:req.put_args.user_id}).toArray(function(err,user) {
+						_collection.find({_id:user_id}).toArray(function(err,user) {
 							if(err) { kiel.response(req, res, {data : err}, 500);return;}
 							if(user.length === 0) {
 								kiel.response(req, res, {data : "User not found."}, 404);
@@ -176,7 +182,7 @@ user = function(kiel){
 								req.put_args.referrer			&& (usr['referrer'] = req.put_args.referrer );
 								usr.profile_info['updated_at'] = dt.getTime();
 								
-								_collection.update({_id:req.put_args.user_id}, usr,function(err,d) {
+								_collection.update({_id:user_id}, usr,function(err,d) {
 									if(err) { kiel.response(req, res, {data : err}, 500);return;}
 									if(d === 1) {
 										var ret = {

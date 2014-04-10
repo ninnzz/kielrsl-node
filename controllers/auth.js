@@ -4,6 +4,10 @@ var auth
 
 
 
+	/*** IMPORTANT ***/
+	// by default, kielrsl-node stores your user data to the collection 'users'
+	// if you want to use the implementation of oauth, kidnly follow the oauth procedure of the framework
+
 auth = function(kiel){
 
 	var login_check = function(req,res,app){
@@ -332,6 +336,14 @@ auth = function(kiel){
 					return;
 				}
 				generate_access_token(req,res);
+			} ,
+			has_scopes : function(req,res) {
+				//any form of auth server
+				//https:freedom_auth.com/has_scopes?access_token=&scopes=web.view,users.add
+				var rqrd = ['access_token','scopes'];
+
+				kiel.response(req,res,{has_access: false}, 403);
+				kiel.response(req,res,{has_access: true, access_token: access_token}, 200);
 			}
 		},
 
