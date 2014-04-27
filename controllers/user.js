@@ -150,7 +150,7 @@ user = function(kiel){
 				}
 				//checks the access token to proper edit mapping. Allows user to only edit themselves
 				kiel.utils.has_scopes(['self.edit','web.view'],req.put_args.access_token,function(err,data){
-					if(err){ kiel.response(req, res, {data : err.message}, err.rsponse_code); return; }	
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
 					user_id = data.user_id;
 					db._instance().collection('users',function(err,_collection){
 						if(err) {callback({message:err,response_code:500});return;}
