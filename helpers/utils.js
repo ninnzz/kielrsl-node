@@ -59,6 +59,8 @@ exports.has_scopes = function(scope,access_token,callback) {
 								callback({message:'Scopes are empty',response_code:400});
 								return;
 							}
+
+							console.log(scps);
 							db._instance().collection('oauth_session_scopes',function(err,_collection){
 								if(err) {callback({message:err,response_code:500});return;}
 								os_collection = _collection;
