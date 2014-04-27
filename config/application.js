@@ -16,7 +16,7 @@ var application = {
    	 *	set the Contetnt-Type for each response
 	 */
 
-	"response_type" : "application/json",
+	"response_type" : "application/json; charset=utf-8",
 	
 	/**
 	 * set base_url for the application
