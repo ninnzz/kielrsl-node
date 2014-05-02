@@ -8,11 +8,13 @@ var crypto = require('crypto')
 	
 exports.required_fields = function(required,fields)
 {
+	// console.log(fields);
 	for(var req in required){
-		if(!fields.hasOwnProperty(required[req]))
-			return false;
+		if(!fields.hasOwnProperty(required[req]) || fields[required[req]] == ''){
+			return {field:required[req], stat:false};
+		}
 	}
-	return true;
+	return {stat:true};
 };
 
 exports.hash = function (string, hash) {
@@ -59,8 +61,6 @@ exports.has_scopes = function(scope,access_token,callback) {
 								callback({message:'Scopes are empty',response_code:400});
 								return;
 							}
-
-							console.log(scps);
 							db._instance().collection('oauth_session_scopes',function(err,_collection){
 								if(err) {callback({message:err,response_code:500});return;}
 								os_collection = _collection;
@@ -73,7 +73,6 @@ exports.has_scopes = function(scope,access_token,callback) {
 									callback(null,d[0]);
 									return;
 								})
-
 							});
 						} else {
 							callback({message:'Invalid access_token. Access_token app_id mismatch.',response_code:400});

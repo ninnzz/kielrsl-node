@@ -23,7 +23,7 @@ user = function(kiel){
 		req.post_args.fname 		&& (usr.profile_info['fname'] = req.post_args.fname );
 		req.post_args.lname 		&& (usr.profile_info['lname'] = req.post_args.lname );
 		req.post_args.avatar 		&& (usr.profile_info['avatar'] = req.post_args.avatar );
-		req.post_args.birthday 		&& (usr.profile_info['birthdate'] = req.post_args.birthdate );
+		req.post_args.birthdate 		&& (usr.profile_info['birthdate'] = req.post_args.birthdate );
 		req.post_args.skype 		&& (usr.contact_info['skype'] = req.post_args.skype );
 		req.post_args.google_refresh_token 	&& (usr['google_refresh_token'] = req.post_args.google_refresh_token );
 		req.post_args.street_address		&& (usr.contact_info.address['street_address'] = req.post_args.street_address );
@@ -84,9 +84,10 @@ user = function(kiel){
 		get : {
 			index : function(req,res) {
 				var rqrd = ['access_token']
-					,scopes;
-				if(!kiel.utils.required_fields(rqrd,req.get_args)){
-					kiel.response(req, res, {data : "Missing fields"}, 500);
+					,scopes
+					, rst;
+				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
 				((req.get_args.self && (scopes = ['self.view'])) || (scopes = ['user.view']) );
@@ -117,7 +118,8 @@ user = function(kiel){
 
 		post : {
 			register : function(req,res) {
-				var rqrd = ['email','password','app_id','fname','lname','birthdate'];
+				var rqrd = ['email','password','app_id','fname','lname','birthdate']
+					, rst;
 				if(!kiel.utils.required_fields(rqrd,req.post_args)){
 					kiel.response(req, res, {data : "Missing fields"}, 500);
 					return;
@@ -143,9 +145,10 @@ user = function(kiel){
 		put : {
 			index : function(req,res) {
 				var rqrd = ['access_token']
-					, user_id;
-				if(!kiel.utils.required_fields(rqrd,req.put_args)){
-					kiel.response(req, res, {data : "Missing fields"}, 500);
+					, user_id
+					, rst;
+				if(!(rst = kiel.utils.required_fields(rqrd,req.put_args)).stat){
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
 				//checks the access token to proper edit mapping. Allows user to only edit themselves
@@ -168,7 +171,7 @@ user = function(kiel){
 								req.put_args.avatar 			&& (usr.profile_info['avatar'] = req.put_args.avatar );
 								req.put_args.paypal 			&& (usr.profile_info['paypal'] = req.put_args.paypal );
 								req.put_args.custom_url 		&& (usr.profile_info['custom_url'] = req.put_args.custom_url );
-								req.put_args.birthday 			&& (usr.profile_info['birthdate'] = req.put_args.birthdate );
+								req.put_args.birthdate 			&& (usr.profile_info['birthdate'] = req.put_args.birthdate );
 								req.put_args.skype 				&& (usr.contact_info['skype'] = req.put_args.skype );
 								req.put_args.facebook 			&& (usr.contact_info['facebook'] = req.put_args.facebook );
 								req.put_args.twitter 			&& (usr.contact_info['twitter'] = req.put_args.twitter );
