@@ -1,92 +1,82 @@
-var user
+var app
 	, db = require(__dirname + "/../helpers/ndb");
 
 
-user = function(kiel){
-
-	var input_user = function(req,res,app) {
-		var usr = {}
-			, d = new Date();
-				
-		/*** IMPORTANT ***/
-		// for new projects that wants to use the user class, add your own custom user implementation here
-		// you can create or use the existing user function just redefine the fields of your user object
-
-
-		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
-		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
-		usr.contact_info['address'] = {};
-		usr[app.name+'_data']	= {user_scope : app.basic_scopes};
-		
-		req.post_args.email 		&& (usr['email'] = req.post_args.email );
-		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
-		req.post_args.fname 		&& (usr.profile_info['fname'] = req.post_args.fname );
-		req.post_args.lname 		&& (usr.profile_info['lname'] = req.post_args.lname );
-		req.post_args.avatar 		&& (usr.profile_info['avatar'] = req.post_args.avatar );
-		req.post_args.birthdate 		&& (usr.profile_info['birthdate'] = req.post_args.birthdate );
-		req.post_args.skype 		&& (usr.contact_info['skype'] = req.post_args.skype );
-		req.post_args.google_refresh_token 	&& (usr['google_refresh_token'] = req.post_args.google_refresh_token );
-		req.post_args.street_address		&& (usr.contact_info.address['street_address'] = req.post_args.street_address );
-		req.post_args.city			&& (usr.contact_info.address['city'] = req.post_args.city );
-		req.post_args.state			&& (usr.contact_info.address['state'] = req.post_args.state );
-		req.post_args.country		&& (usr.contact_info.address['country'] = req.post_args.country );
-		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
-		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
-		
-		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
-		usr['created_at'] 		= d.getTime();
-		usr['updated_at'] 		= d.getTime();
-		usr['is_system_admin'] 	= false;
-		usr['email_confirmed'] 	= false;
-		//use md5 then decode later
-		usr['confirmation_token'] = kiel.utils.hash(kiel.application_config.salt+ '-email-' + req.post_args.email);
-
-		db._instance().collection('users',function(err,_collection){
-			_collection.insert(usr, function (err) {
-				if (err) {
-					kiel.logger(err+" Failed to add user to db : "+usr._id,'db_debug');
-					kiel.response(req, res, {data : "Failed to add user to db.", error:err}, 500);
-				} else {
-					kiel.logger("Added user to db : "+usr._id,'db_debug');
-					delete usr.password;
-					delete usr.confirmation_token;
-					kiel.response(req, res, {data : usr}, 200);
-				}
-			});
-		});
-
-
-	}
-	, valid_app = function(req,res) {
-		db._instance().collection('app',function(err,_collection){
-			if(err) { kiel.response(req, res, {data : err}, 404);return;}
-
-			_collection.find({_id:req.post_args.app_id}).toArray(function(err,d){
+app = function(kiel){
+	var find_app = function(err,req,res,data,cb) {
+			db._instance().collection('app',function(err,_collection){
 				if(err) {
-					kiel.response(req, res, {data : err}, 404);
+					kiel.response(req, res, {data : err}, 500);
 					return;
 				}
-				if(d.length === 1) {
-					try{
-						input_user(req,res,d[0]);
-					} catch (err) {
+				_collection.find({_id:data.app_id}).toArray(function(err,d){
+					if(err) {
 						kiel.response(req, res, {data : err}, 500);
+						return;
 					}
-				} else {
-					kiel.response(req, res, {data : "Application Id does not exists."}, 500);
-				}
+					if(d.length === 1) {
+						try{
+							cb(req,res,d[0],data);
+						} catch (err) {
+							kiel.response(req, res, {data : err}, 500);
+						}
+					} else {
+						kiel.response(req, res, {data : "Application Id does not exists."}, 500);
+					}
+				});
 			});
-		});
-	};
+		}
+		, change_user_app_data = function(req,res,app,data) {
+			var app_data
+				, app_update = {};
 
+			try {
+				app_data = JSON.parse(data.app_data);
+			} catch(err) {
+				kiel.response(req, res, {data : err}, 500);
+				console.log(err);
+				return;
+			}
 
+			console.log(app_data);
+			console.log(data);
+			app_update[data.app_id+'_data'] = app_data;
+			//add here
+			db._instance().collection('users',function(err,_collection){
+				_collection.update({_id:data.user_id},{$set:app_update}, function (err) {
+					if (err) {
+						kiel.response(req, res, {data : "Failed to update user in db."}, 500);
+					} else {
+						kiel.response(req, res, {data : app_data}, 200);
+					}
+				});
+			});
+
+		};
+	
 	return {
 		get : {
-			
+
 		},
 
 		post : {
-			
+			own_app_data : function(req,res) {
+				var rqrd = ['app_id','access_token','user_id','app_data']
+					, rst;
+				if(!(rst = kiel.utils.required_fields(rqrd,req.post_args)).stat){
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
+					return;
+				}
+				kiel.utils.has_scopes(['self.edit'],req.post_args.access_token,function(err,d){
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
+					if(req.post_args.user_id !== d.user_id) {
+						kiel.response(req, res, {data : "Invalid user_id for access_token!"}, 404);
+						return;
+					}
+					find_app(null,req,res,req.post_args,change_user_app_data);
+				});
+				
+			}
 		}, 
 
 		put : {
@@ -99,4 +89,4 @@ user = function(kiel){
 	}
 }
 
-module.exports = user;
+module.exports = app;

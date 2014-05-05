@@ -16,7 +16,7 @@ user = function(kiel){
 		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
 		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
-		usr[app.name+'_data']	= {user_scope : app.basic_scopes};
+		usr[app._id+'_data']	= {user_scope : app.basic_scopes};
 		
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
