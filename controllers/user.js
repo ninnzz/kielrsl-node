@@ -96,7 +96,6 @@ user = function(kiel){
 					kiel.response(req, res, {data : "Missing user_id"}, 404);
 					return;
 				}
-
 				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
@@ -146,15 +145,20 @@ user = function(kiel){
 			index : function(req,res) {
 				var rqrd = ['access_token']
 					, user_id
-					, rst;
+					, rst
+					, scps = ['self.edit','self.view']
+					, admin_edit = false;
 				if(!(rst = kiel.utils.required_fields(rqrd,req.put_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
+
+				req.put_args.user_id && ((scps = ['users.edit','admin.view']) && (admin_edit = true));
+				
 				//checks the access token to proper edit mapping. Allows user to only edit themselves
-				kiel.utils.has_scopes(['self.edit','self.view'],req.put_args.access_token,function(err,data){
+				kiel.utils.has_scopes(scps,req.put_args.access_token,function(err,data){
 					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
-					user_id = data.user_id;
+					user_id = admin_edit?req.put_args.user_id:data.user_id;
 					db._instance().collection('users',function(err,_collection){
 						if(err) {callback({message:err,response_code:500});return;}
 						_collection.find({_id:user_id}).toArray(function(err,user) {
