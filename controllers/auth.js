@@ -378,12 +378,20 @@ auth = function(kiel){
 				generate_access_token(req,res);
 			} ,
 			has_scopes : function(req,res) {
-				//any form of auth server
-				//https:freedom_auth.com/has_scopes?access_token=&scopes=web.view,users.add
-				var rqrd = ['access_token','scopes'];
+				var rqrd = ['access_token','scopes'],
+					scps = [];
 
-				kiel.response(req,res,{has_access: false}, 403);
-				kiel.response(req,res,{has_access: true, access_token: access_token}, 200);
+				(req.get_args.scopes.split(',')).forEach(function(sc) {
+					scps.push({scope: req.get_args.scope_token+'.'+sc.trim() });
+				});
+
+				kiel.utils.has_scopes(scps,req.get_args.access_token,function(err,d){
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
+					
+					kiel.response(req, res, {data : "Success"}, 200);
+					return;
+					
+				});
 			}
 		},
 
