@@ -382,7 +382,7 @@ auth = function(kiel){
 					scps = [];
 
 				(req.get_args.scopes.split(',')).forEach(function(sc) {
-					scps.push({scope: req.get_args.scope_token+'.'+sc.trim() });
+					scps.push(sc.trim());
 				});
 
 				kiel.utils.has_scopes(scps,req.get_args.access_token,function(err,d){
