@@ -54,6 +54,7 @@ exports.has_scopes = function(scope,access_token,callback) {
 						if(err) {callback({message:err,response_code:500});return;}
 						if(a.length === 1) {
 							var scps = [];
+							console.log(scope);
 							scope.forEach(function(sc) {
 								scps.push({app_id:a[0]._id,scope: a[0].scope_token+'.'+sc ,access_token:access_token});
 							});
@@ -66,6 +67,8 @@ exports.has_scopes = function(scope,access_token,callback) {
 								os_collection = _collection;
 								os_collection.find({$or:scps}).toArray(function(err,sc){
 									if(err) {callback({message:err,response_code:500});return;}
+									console.log('======RETURN SCOPES======');
+									console.log(sc);
 									if(sc.length !== scope.length) {
 										callback({message:'You dont have permission to do this operation.',response_code:401});
 										return;
