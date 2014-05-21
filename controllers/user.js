@@ -98,7 +98,10 @@ user = function(kiel){
 				}
 				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
+
+					console.log(d);
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
+					selectables[d.app_id+'_data'] = 1;
 					db._instance().collection('users',function(err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
 						_collection.find({_id:d.user_id},selectables).toArray(function(err,user) {
