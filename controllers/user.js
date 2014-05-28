@@ -27,6 +27,7 @@ user = function(kiel){
 		req.post_args.country		&& (usr.contact_info.address['country'] = req.post_args.country );
 		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
+		console.dir(req.post_args);
 		console.dir(usr);
 
 
