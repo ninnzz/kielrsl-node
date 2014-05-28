@@ -17,11 +17,6 @@ user = function(kiel){
 			roles.push(sc.trim());
 		});
 
-		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
-		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
-		usr.contact_info['address'] = {};
-		usr[app._id+'_data']	= {roles : roles};
-		
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
 		req.post_args.fname 		&& (usr.profile_info['fname'] = req.post_args.fname );
@@ -36,6 +31,11 @@ user = function(kiel){
 		req.post_args.country		&& (usr.contact_info.address['country'] = req.post_args.country );
 		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
+
+		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
+		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
+		usr.contact_info['address'] = {};
+		usr[app._id+'_data']	= {roles : roles,admin:false};
 		
 		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
 		usr['created_at'] 		= d.getTime();
