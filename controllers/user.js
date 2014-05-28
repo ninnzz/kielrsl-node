@@ -6,17 +6,21 @@ user = function(kiel){
 
 	var input_user = function(req,res,app) {
 		var usr = {}
-			, d = new Date();
+			, d = new Date()
+			, roles = [];
 				
 		/*** IMPORTANT ***/
 		// for new projects that wants to use the user class, add your own custom user implementation here
 		// you can create or use the existing user function just redefine the fields of your user object
 
+		(req.post_args.roles.split(',')).forEach(function(sc) {
+			roles.push(sc.trim());
+		});
 
 		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
 		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
-		usr[app._id+'_data']	= {user_scope : app.basic_scopes};
+		usr[app._id+'_data']	= {roles : roles};
 		
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
@@ -85,7 +89,8 @@ user = function(kiel){
 			index : function(req,res) {
 				var rqrd = ['access_token']
 					,scopes
-					, rst;
+					, rst
+					, uid;
 				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
@@ -98,12 +103,14 @@ user = function(kiel){
 				}
 				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
-
 					console.log(d);
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
 					selectables[d.app_id+'_data'] = 1;
 					db._instance().collection('users',function(err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
+						//added to check what user_id to use
+						((req.get_args.self && (uid = d.user_id)) || (uid = req.get_args.user_id) );
+						
 						_collection.find({_id:d.user_id},selectables).toArray(function(err,user) {
 							if(err){ kiel.response(req, res, {data : err}, 500); return;}
 							if(user.length === 1) {
@@ -120,7 +127,7 @@ user = function(kiel){
 
 		post : {
 			register : function(req,res) {
-				var rqrd = ['email','password','app_id','fname','lname','birthdate']
+				var rqrd = ['email','password','app_id','fname','lname','birthdate','roles']
 					, rst;
 				if(!kiel.utils.required_fields(rqrd,req.post_args)){
 					kiel.response(req, res, {data : "Missing fields"}, 500);
