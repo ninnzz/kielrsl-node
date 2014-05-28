@@ -74,7 +74,12 @@ user = function(kiel){
 					return;
 				}
 				if(d.length === 1) {
-					input_user(req,res,d[0]);
+					try{
+						input_user(req,res,d[0]);
+					} catch (err) {
+						console.dir(err);
+						kiel.response(req, res, {data : err}, 500);
+					}
 				} else {
 					kiel.response(req, res, {data : "Application Id does not exists."}, 500);
 				}
