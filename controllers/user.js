@@ -74,11 +74,7 @@ user = function(kiel){
 					return;
 				}
 				if(d.length === 1) {
-					try{
-						input_user(req,res,d[0]);
-					} catch (err) {
-						kiel.response(req, res, {data : err}, 500);
-					}
+					input_user(req,res,d[0]);
 				} else {
 					kiel.response(req, res, {data : "Application Id does not exists."}, 500);
 				}
@@ -133,7 +129,7 @@ user = function(kiel){
 				var rqrd = ['email','password','app_id','fname','lname','birthdate','roles']
 					, rst;
 					console.log(req.post_args);
-					
+
 				if(!(rst = kiel.utils.required_fields(rqrd,req.post_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
