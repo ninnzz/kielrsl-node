@@ -132,6 +132,7 @@ user = function(kiel){
 			register : function(req,res) {
 				var rqrd = ['email','password','app_id','fname','lname','birthdate','roles']
 					, rst;
+					console.log(req.post_args);
 				if(!kiel.utils.required_fields(rqrd,req.post_args)){
 					kiel.response(req, res, {data : "Missing fields"}, 500);
 					return;
