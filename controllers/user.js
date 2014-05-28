@@ -27,12 +27,13 @@ user = function(kiel){
 		req.post_args.country		&& (usr.contact_info.address['country'] = req.post_args.country );
 		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
+		console.dir(usr);
 
 
 		(req.post_args.roles.split(',')).forEach(function(sc) {
 			roles.push(sc.trim());
 		});
-		
+
 		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
 		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
@@ -45,7 +46,7 @@ user = function(kiel){
 		usr['email_confirmed'] 	= false;
 		//use md5 then decode later
 		usr['confirmation_token'] = kiel.utils.hash(kiel.application_config.salt+ '-email-' + req.post_args.email);
-
+		console.log(usr);
 		db._instance().collection('users',function(err,_collection){
 			_collection.insert(usr, function (err) {
 				if (err) {
