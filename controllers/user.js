@@ -13,6 +13,10 @@ user = function(kiel){
 		// for new projects that wants to use the user class, add your own custom user implementation here
 		// you can create or use the existing user function just redefine the fields of your user object
 
+		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
+		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
+		usr.contact_info['address'] = {};
+
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
 		req.post_args.fname 		&& (usr.profile_info['fname'] = req.post_args.fname );
@@ -35,9 +39,6 @@ user = function(kiel){
 			roles.push(sc.trim());
 		});
 
-		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
-		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
-		usr.contact_info['address'] = {};
 		usr[app._id+'_data']	= {roles : roles,admin:false};
 		
 		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
