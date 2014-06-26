@@ -141,7 +141,7 @@ user = function(kiel){
 							}
 						}
 					}
-					
+					console.log(prop);
 					db._instance().collection('users',function(err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
 						
