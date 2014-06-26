@@ -153,7 +153,7 @@ user = function(kiel){
 							.toArray(function(err,user) {
 								if(err){ kiel.response(req, res, {data : err}, 500); return;}
 								if(user.length != 0) {
-									kiel.response(req, res, {user_data:user}, 200);
+									kiel.response(req, res, {users:user}, 200);
 									return;
 								} else {
 									kiel.response(req, res, {data :"User not found."}, 404);		
