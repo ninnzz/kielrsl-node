@@ -163,6 +163,9 @@ auth = function(kiel){
 											kiel.response(req, res, {data : err}, 500);
 											return;
 										}
+										console.log(d);
+										console.log('-----------------');
+										console.log(scps);
 										if(d.length === scps.length) {
 											var d = new Date();
 											save_request_token(req,res,{request_token: kiel.utils.hash(d.getTime())+kiel.utils.random(),user_id: req.get_args.user_id,app_id:req.get_args.app_id,scopes:scps,created_at:d.getTime(),expires:d.getTime()+60*60*1000});

@@ -30,6 +30,7 @@ user = function(kiel){
 		req.post_args.state			&& (usr.contact_info.address['state'] = req.post_args.state );
 		req.post_args.country		&& (usr.contact_info.address['country'] = req.post_args.country );
 		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
+		req.post_args.reason		&& (usr['reason'] = req.post_args.reason );
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
 		console.dir(req.post_args);
 		console.dir(usr);
@@ -112,7 +113,7 @@ user = function(kiel){
 				req.get_args.limit 	&& ( limit = req.get_args.limit );
 				req.get_args.skip 	&& ( skip = req.get_args.skip );
 				req.get_args.sort 	&& ( sort = req.get_args.sort );
-				req.get_args.sort_order 	&& ( sort_order = req.get_args.sort_order );
+				req.get_args.sort_order 	&& ( sort_order = req.get_args.sort_order*1 );
 				
 				s_condition[sort] = sort_order;
 				
