@@ -85,7 +85,7 @@ exports.has_scopes = function(scope,access_token,callback) {
 				});
 			} else {
 				if(callback){
-					callback({message:'Invalid access_token. Access_token not found.',response_code:404});
+					callback({message:'Invalid access_token. Access_token not found.',response_code:500});
 					return;
 				}
 			}

@@ -40,7 +40,7 @@ app = function(kiel){
 
 			console.log(app_data);
 			console.log(data);
-			app_update[data.app_id+'_data'] = app_data;
+			app_update['data_' + data.app_id] = app_data;
 			//add here
 			db._instance().collection('users',function(err,_collection){
 				_collection.update({_id:data.user_id},{$set:app_update}, function (err) {

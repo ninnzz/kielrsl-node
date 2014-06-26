@@ -39,7 +39,7 @@ user = function(kiel){
 			roles.push(sc.trim());
 		});
 
-		usr[app._id+'_data']	= {roles : roles,admin:false};
+		usr['data_' + app._id]	= {roles : roles,admin:false};
 		
 		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
 		usr['created_at'] 		= d.getTime();
@@ -93,14 +93,28 @@ user = function(kiel){
 		get : {
 			index : function(req,res) {
 				var rqrd = ['access_token']
-					,scopes
+					, scopes
 					, rst
-					, uid;
+					, uid
+					, condition = {}
+					, s_condition = {}
+					, limit = 10
+					, skip = 0
+					, sort = '_id'
+					, sort_order = 1;
 				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
+
 				((req.get_args.self && (scopes = ['self.view'])) || (scopes = ['user.view']) );
+	
+				req.get_args.limit 	&& ( limit = req.get_args.limit );
+				req.get_args.skip 	&& ( skip = req.get_args.skip );
+				req.get_args.sort 	&& ( sort = req.get_args.sort );
+				req.get_args.sort_order 	&& ( sort_order = req.get_args.sort_order );
+				
+				s_condition[sort] = sort_order;
 				
 				if(!req.get_args.self && !req.get_args.user_id) {
 					kiel.response(req, res, {data : "Missing user_id"}, 404);
@@ -108,23 +122,43 @@ user = function(kiel){
 				}
 				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
-					console.log(d);
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
-					selectables[d.app_id+'_data'] = 1;
+					
+					selectables['data_' + d.app_id] = 1;
+					req.get_args.self && ( condition._id = d.user_id );
+					!req.get_args.self && req.get_args.user_id && ( condition._id = req.get_args.user_id );
+					
+					for (var prop in req.get_args) {
+						if ( ['user_id', '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
+							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false')
+								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
+							else if ( !isNaN(req.get_args[prop]) ) {
+								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
+							} else {
+								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop];
+							}
+						}
+					}
+					
 					db._instance().collection('users',function(err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
-						//added to check what user_id to use
-						((req.get_args.self && (uid = d.user_id)) || (uid = req.get_args.user_id) );
 						
-						_collection.find({_id:d.user_id},selectables).toArray(function(err,user) {
-							if(err){ kiel.response(req, res, {data : err}, 500); return;}
-							if(user.length === 1) {
-								kiel.response(req, res, {user_data:user[0]}, 200);
-								return;
-							} else {
-								kiel.response(req, res, {data :"User not found."}, 404);		
-							}
-						});
+						_collection.find(condition ,selectables)
+							.sort(s_condition)
+							.skip(skip)
+							.limit(limit)
+							.toArray(function(err,user) {
+								if(err){ kiel.response(req, res, {data : err}, 500); return;}
+								if(user.length === 1) {
+									kiel.response(req, res, {user_data:user[0]}, 200);
+									return;
+								} else if (user.length === 1) {
+									kiel.response(req, res, {user_data:user}, 200);
+									return;
+								}else {
+									kiel.response(req, res, {data :"User not found."}, 404);		
+								}
+							});
 					});
 				});
 			}

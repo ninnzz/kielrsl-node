@@ -23,7 +23,7 @@ auth = function(kiel){
 				}
 				(req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
 				slctbl = {"email":1,"profile_info":1,"password":1,"google_access_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
-				slctbl[app._id+'_data'] = 1;
+				slctbl['data_' + app._id] = 1;
 				
 				if(Object.keys(crdntls).length === 0)
 					throw "Invalid credentials for login.";
@@ -48,9 +48,9 @@ auth = function(kiel){
 										return;
 									} else {
 										//add app if user of new app
-										if(!d[0][app._id+'_data']) {
+										if(!d[0]['data_' + app._id]) {
 											add_app(_collection,app,d[0]);
-											d[0][app._id+'_data'] = {user_scopes:app.basic_scopes};
+											d[0]['data_' + app._id] = {user_scopes:app.basic_scopes};
 										}
 										delete d[0].password;
 										delete d[0].google_access_token;
@@ -66,9 +66,9 @@ auth = function(kiel){
 							});
 						} else {
 							//add app if user of new app
-							if(!d[0][app._id+'_data']) {
+							if(!d[0]['data_' + app._id]) {
 								add_app(_collection,app,d[0]);
-								d[0][app._id+'_data'] = {user_scopes:app.basic_scopes};
+								d[0]['data_' + app._id] = {user_scopes:app.basic_scopes};
 							}
 							delete d[0].password;
 							delete d[0].google_access_token;
@@ -84,7 +84,7 @@ auth = function(kiel){
 		, add_app = function(user_collection,app,user) {
 			console.log('added new scopes');
 			var crd = {};
-			crd[app._id+'_data'] = {user_scopes:app.basic_scopes};
+			crd['data_' + app._id] = {user_scopes:app.basic_scopes};
 			user_collection.update({_id:user._id}, {'$set':crd},function(err,d) {
 				console.log(err);
 				console.log(d);
@@ -122,7 +122,7 @@ auth = function(kiel){
 					return;
 				}
 				_collection.remove({user_id:r_token_object.user_id, app_id: r_token_object.app_id},function(err,dcs) {
-					if(err) {
+					if (err) {
 						kiel.response(req, res, {data : err}, 500);
 						return;
 					}
@@ -149,7 +149,7 @@ auth = function(kiel){
 							try {
 								var scps = [];
 								//put trim on scopes here
-								(req.get_args.scopes.split(',')).forEach(function(sc) {
+								req.get_args.scopes.split(',').forEach(function(sc) {
 									scps.push({scope: req.get_args.scope_token+'.'+sc.trim() });
 								});
 
