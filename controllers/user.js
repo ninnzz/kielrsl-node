@@ -131,6 +131,7 @@ user = function(kiel){
 					!req.get_args.self && req.get_args.user_id && ( condition._id = req.get_args.user_id );
 					
 					for (var prop in req.get_args) {
+						console.log(prop);
 						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
 							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false')
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
@@ -141,7 +142,8 @@ user = function(kiel){
 							}
 						}
 					}
-					console.log(prop);
+					console.log('======');
+					console.log(condition);
 					db._instance().collection('users',function(err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
 						
