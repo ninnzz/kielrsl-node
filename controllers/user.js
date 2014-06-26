@@ -117,10 +117,11 @@ user = function(kiel){
 				
 				s_condition[sort] = sort_order;
 				
-				if(!req.get_args.self && !req.get_args.user_id) {
-					kiel.response(req, res, {data : "Missing user_id"}, 404);
-					return;
-				}
+				// if(!req.get_args.self && !req.get_args.user_id) {
+				// 	kiel.response(req, res, {data : "Missing user_id"}, 404);
+				// 	return;
+				// }
+
 				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
@@ -130,7 +131,7 @@ user = function(kiel){
 					!req.get_args.self && req.get_args.user_id && ( condition._id = req.get_args.user_id );
 					
 					for (var prop in req.get_args) {
-						if ( ['user_id', '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
+						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
 							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false')
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
 							else if ( !isNaN(req.get_args[prop]) ) {
