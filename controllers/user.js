@@ -136,9 +136,9 @@ user = function(kiel){
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
 							else if ( !isNaN(req.get_args[prop]) ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
-							} else if (!req.get_args && prop == 'user_id') {
+							} else if (!req.get_args.self && prop == 'user_id') {
 								condition._id = req.get_args.user_id 
-							}else {
+							} else if (prop != 'user_id') {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop];
 							}
 						}
