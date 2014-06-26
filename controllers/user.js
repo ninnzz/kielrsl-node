@@ -128,7 +128,6 @@ user = function(kiel){
 					
 					selectables['data_' + d.app_id] = 1;
 					req.get_args.self && ( condition._id = d.user_id );
-					!req.get_args.self && req.get_args.user_id && ( condition._id = req.get_args.user_id );
 					
 					for (var prop in req.get_args) {
 						console.log(prop);
@@ -137,7 +136,9 @@ user = function(kiel){
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
 							else if ( !isNaN(req.get_args[prop]) ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
-							} else {
+							} else if (!req.get_args && req.get_args.user_id) {
+								condition._id = req.get_args.user_id 
+							}else {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop];
 							}
 						}
