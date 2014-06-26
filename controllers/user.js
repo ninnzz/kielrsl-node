@@ -157,10 +157,10 @@ user = function(kiel){
 								if(user.length === 1) {
 									kiel.response(req, res, {user_data:user[0]}, 200);
 									return;
-								} else if (user.length === 1) {
+								} else if (user.length > 1) {
 									kiel.response(req, res, {user_data:user}, 200);
 									return;
-								}else {
+								} else {
 									kiel.response(req, res, {data :"User not found."}, 404);		
 								}
 							});
