@@ -82,7 +82,7 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 										callback({message : 'You dont have permission to do this operation.',response_code : 401});
 										return;
 									}
-									if (!optinal_scopes)
+									if (!optional_scopes)
 										return callback(null, d[0]);
 
 									else {
