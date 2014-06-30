@@ -32,7 +32,7 @@ exports.random = function () {
     return str;
 };
 
-exports.has_scopes = function(scope,optinal_scopes,access_token,callback) {
+exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 	var ac_collection
 		, os_collection
 		, app_collection,
@@ -60,9 +60,13 @@ exports.has_scopes = function(scope,optinal_scopes,access_token,callback) {
 								//add function that will remove duplicate
 								scps.push({app_id : a[0]._id,scope :  a[0].scope_token+'.'+sc ,access_token : access_token});
 							});
-							optinal_scopes.forEach(function(os) {
-								o_scps.push({app_id : a[0]._id,scope :  a[0].scope_token+'.'+os ,access_token : access_token});
-							});
+
+							if ( optional_scopes ) {
+								optional_scopes.forEach(function(os) {
+									o_scps.push({app_id : a[0]._id,scope :  a[0].scope_token+'.'+os ,access_token : access_token});
+								});
+							}
+							
 							if (scps.length === 0) {
 								callback({message : 'Scopes are empty',response_code : 400});
 								return;
