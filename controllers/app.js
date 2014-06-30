@@ -69,7 +69,7 @@ app = function(kiel){
 				}
 				kiel.utils.has_scopes(['self.edit'], ['admin.edit_all'], req.post_args.access_token, function(err, d, optional_d){
 					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
-					if(req.post_args.user_id !== d.user_id) {
+					if ( req.post_args.user_id !== d.user_id && !optional_d ) {
 						kiel.response(req, res, {data : "Invalid user_id for access_token!"}, 404);
 						return;
 					}
