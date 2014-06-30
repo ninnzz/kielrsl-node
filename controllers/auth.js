@@ -430,7 +430,7 @@ auth = function(kiel){
 		}, 
 
 		put : {
-			add_self_scopes : function(req,res) {
+			add_self_scopes : function (req,res) {
 				var rqrd = ['access_token','user_id','scopes']
 					, rst
 					, scopes = ['self.edit'];
@@ -449,6 +449,25 @@ auth = function(kiel){
 				});
 
 			} , 
+			add_scopes : function (req, res) {
+				var rqrd = ['access_token','user_id','scopes']
+					, rst
+					, scopes = ['admin.edit_all'];
+				if(!(rst = kiel.utils.required_fields(rqrd,req.put_args)).stat){
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
+					return;
+				}
+				kiel.utils.has_scopes(scopes, null, req.put_args.access_token, function(err,d){
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
+					if(!d) {
+						kiel.response(req, res, {data : "Invalid user_id for access_token!"}, 404);
+						return;
+					}
+					d['scopes'] = req.put_args.scopes;
+					find_app(null,req,res,d,add_scopes);
+				});
+
+			} ,
 			admin_add_scopes : function(req,res) {
 				// kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 
