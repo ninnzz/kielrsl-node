@@ -122,7 +122,7 @@ user = function(kiel){
 				// 	return;
 				// }
 
-				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
+				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function(err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
 					
@@ -207,7 +207,7 @@ user = function(kiel){
 				req.put_args.user_id && ((scps = ['users.edit','admin.view']) && (admin_edit = true));
 				
 				//checks the access token to proper edit mapping. Allows user to only edit themselves
-				kiel.utils.has_scopes(scps,req.put_args.access_token,function(err,data){
+				kiel.utils.has_scopes(scps, null, req.put_args.access_token, function(err,data){
 					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
 					user_id = admin_edit?req.put_args.user_id:data.user_id;
 					db._instance().collection('users',function(err,_collection){

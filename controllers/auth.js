@@ -388,7 +388,7 @@ auth = function(kiel){
 					scps.push(sc.trim());
 				});
 
-				kiel.utils.has_scopes(scps,req.get_args.access_token,function(err,d){
+				kiel.utils.has_scopes(scps, null, req.get_args.access_token, function(err,d){
 					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
 					
 					kiel.response(req, res, {data : "Success"}, 200);
@@ -438,7 +438,7 @@ auth = function(kiel){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
-				kiel.utils.has_scopes(scopes,req.put_args.access_token,function(err,d){
+				kiel.utils.has_scopes(scopes, null, req.put_args.access_token, function(err,d){
 					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
 					if(req.put_args.user_id !== d.user_id) {
 						kiel.response(req, res, {data : "Invalid user_id for access_token!"}, 404);
@@ -450,9 +450,9 @@ auth = function(kiel){
 
 			} , 
 			admin_add_scopes : function(req,res) {
-				kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
+				// kiel.utils.has_scopes(scopes,req.get_args.access_token,function(err,d){
 
-				});
+				// });
 			}
 		},
 
