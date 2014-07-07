@@ -167,7 +167,7 @@ user = function(kiel){
 
 		post : {
 			register : function(req,res) {
-				var rqrd = ['email','password','app_id','fname','lname','roles']
+				var rqrd = ['email','app_id','fname','lname','roles']
 					, rst;
 					console.log(req.post_args);
 
@@ -272,7 +272,42 @@ user = function(kiel){
 		},
 
 		delete : {
+			var rqrd = ['user_id']
+					, user_id
+					, rst
+					, scps = ['self.edit','self.view']
+					, admin_edit = false;
+				if(!(rst = kiel.utils.required_fields(rqrd,req.delete_args)).stat){
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
+					return;
+				}
 
+				db._instance().collection('access_token',function(err,_collection) {
+					if(err) {
+						kiel.response(req, res, {data : err}, 500);
+						return;
+					}
+					_collection.remove({user_id:req.delete_args.user_id},function(err,dcs) {
+						if (err) {
+							kiel.response(req, res, {data : err}, 500);
+							return;
+						}
+					});
+				});
+				db._instance().collection('users',function(err,_collection) {
+					if(err) {
+						kiel.response(req, res, {data : err}, 500);
+						return;
+					}
+					_collection.remove({user_id:req.delete_args.user_id},function(err,dcs) {
+						if (err) {
+							kiel.response(req, res, {data : err}, 500);
+							return;
+						}
+					});
+				});
+
+				return kiel.response(req, res, {data : "Deleted: "+req.delete_args.user_id}, 200);
 		}
 	}
 }
