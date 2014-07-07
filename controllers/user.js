@@ -272,7 +272,8 @@ user = function(kiel){
 		},
 
 		delete : {
-			var rqrd = ['user_id']
+			index : function(req,res) {
+				var rqrd = ['user_id']
 					, user_id
 					, rst
 					, scps = ['self.edit','self.view']
@@ -308,6 +309,7 @@ user = function(kiel){
 				});
 
 				return kiel.response(req, res, {data : "Deleted: "+req.delete_args.user_id}, 200);
+			}
 		}
 	}
 }
