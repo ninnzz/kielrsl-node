@@ -23,7 +23,8 @@ user = function(kiel){
 		req.post_args.lname 		&& (usr.profile_info['lname'] = req.post_args.lname );
 		req.post_args.avatar 		&& (usr.profile_info['avatar'] = req.post_args.avatar );
 		req.post_args.birthdate 		&& (usr.profile_info['birthdate'] = req.post_args.birthdate );
-		req.post_args.skype 		&& (usr.contact_info['skype'] = req.post_args.skype );
+		req.post_args.google_id 		&& (usr.profile_info['google_id'] = req.post_args.google_id );
+		req.post_args.skype 			&& (usr.contact_info['skype'] = req.post_args.skype );
 		req.post_args.google_refresh_token 	&& (usr['google_refresh_token'] = req.post_args.google_refresh_token );
 		req.post_args.street_address		&& (usr.contact_info.address['street_address'] = req.post_args.street_address );
 		req.post_args.city			&& (usr.contact_info.address['city'] = req.post_args.city );
@@ -166,7 +167,7 @@ user = function(kiel){
 
 		post : {
 			register : function(req,res) {
-				var rqrd = ['email','password','app_id','fname','lname','birthdate','roles']
+				var rqrd = ['email','password','app_id','fname','lname','roles']
 					, rst;
 					console.log(req.post_args);
 
