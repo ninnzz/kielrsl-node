@@ -65,7 +65,7 @@ user = function (kiel){
 					kiel.logger("Added user to db : "+usr._id,'db_debug');
 					delete usr.password;
 					delete usr.confirmation_token;
-					save_access_token(res, req, usr._id, app._id, final_scps, usr);
+					save_access_token(req, res, usr._id, app._id, final_scps, usr);
 				}
 			});
 		});
