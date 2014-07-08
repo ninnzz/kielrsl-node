@@ -2,12 +2,13 @@ var user
 	, db = require(__dirname + "/../helpers/ndb");
 
 
-user = function(kiel){
+user = function (kiel){
 
-	var input_user = function(req,res,app) {
+	var input_user = function (req,res,app) {
 		var usr = {}
 			, d = new Date()
-			, roles = [];
+			, scps = ['self.edit']
+			, final_scps;
 				
 		/*** IMPORTANT ***/
 		// for new projects that wants to use the user class, add your own custom user implementation here
@@ -37,11 +38,15 @@ user = function(kiel){
 		console.dir(usr);
 
 
-		(req.post_args.roles.split(',')).forEach(function(sc) {
-			roles.push(sc.trim());
+		(req.post_args.scopes.split(',')).forEach(function (sc) {
+			scps.push(sc.trim());
 		});
 
-		usr['data_' + app._id]	= {roles : roles,admin:false};
+		final_scps = scps.filter( function (elem, pos) {
+			return scps.indexOf(elem) == pos;
+		}); 
+
+		usr['data_' + app._id]	= {admin:false};
 		
 		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
 		usr['created_at'] 		= d.getTime();
@@ -50,8 +55,8 @@ user = function(kiel){
 		usr['email_confirmed'] 	= false;
 		//use md5 then decode later
 		usr['confirmation_token'] = kiel.utils.hash(kiel.application_config.salt+ '-email-' + req.post_args.email);
-		console.log(usr);
-		db._instance().collection('users',function(err,_collection){
+		
+		db._instance().collection('users',function (err,_collection){
 			_collection.insert(usr, function (err) {
 				if (err) {
 					kiel.logger(err+" Failed to add user to db : "+usr._id,'db_debug');
@@ -60,18 +65,18 @@ user = function(kiel){
 					kiel.logger("Added user to db : "+usr._id,'db_debug');
 					delete usr.password;
 					delete usr.confirmation_token;
-					kiel.response(req, res, {data : usr}, 200);
+					save_access_token(res, req, usr._id, app._id, final_scps, usr);
 				}
 			});
 		});
 
 
 	}
-	, valid_app = function(req,res) {
-		db._instance().collection('app',function(err,_collection){
+	, valid_app = function (req,res) {
+		db._instance().collection('app',function (err,_collection){
 			if(err) { kiel.response(req, res, {data : err}, 404);return;}
 
-			_collection.find({_id:req.post_args.app_id}).toArray(function(err,d){
+			_collection.find({_id:req.post_args.app_id}).toArray(function (err,d){
 				if(err) {
 					kiel.response(req, res, {data : err}, 404);
 					return;
@@ -88,12 +93,52 @@ user = function(kiel){
 				}
 			});
 		});
+	}
+	, save_access_token = function (req, res, uid, app_id, scopes, usr) {
+
+		var dt = new Date()
+				, oauth_scopes = []
+				, access_token = {
+					user_id : uid,
+					app_id	: app_id,
+					access_token : kiel.utils.hash(uid + dt.getTime()) + kiel.utils.hash(uid + kiel.utils.random()),
+					expires : 0,
+					created_at : dt.getTime()
+				};
+
+			scopes.forEach(function(sc) {
+				oauth_scopes.push({ _id : kiel.utils.hash(access_token.access_token + sc.scope), 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : sc, 'created_at' : dt.getTime()});
+			});
+
+			db._instance().collection('access_tokens',function(err,_collection){
+				_collection.insert(access_token,function(err) {
+					if(err) {
+						console.log(err); return;
+					}
+					db._instance().collection('oauth_session_scopes',function(err,_collection){
+						if(err) {
+							console.log('Failed Loading the scopes for access_token: ' + access_token.access_token); return;
+						}
+						_collection.insert(oauth_scopes,function(err){
+							if(err) {
+								console.log('Failed saving oauth_scopes: '+access_token.access_token); return;
+							}
+
+							kiel.response(req, res, {data : usr, access_token : access_token.access_token, expires : access_token.expires}, 200);
+
+						});
+					});
+				});
+			});
+
+
+
 	};
 
 
 	return {
 		get : {
-			index : function(req,res) {
+			index : function (req,res) {
 				var rqrd = ['access_token']
 					, scopes
 					, rst
@@ -123,7 +168,7 @@ user = function(kiel){
 				// 	return;
 				// }
 
-				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function(err,d){
+				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function (err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
 					
@@ -144,14 +189,14 @@ user = function(kiel){
 							}
 						}
 					}
-					db._instance().collection('users',function(err,_collection) {
+					db._instance().collection('users',function (err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
 						
 						_collection.find(condition ,selectables)
 							.sort(s_condition)
 							.skip(skip)
 							.limit(limit)
-							.toArray(function(err,user) {
+							.toArray(function (err,user) {
 								if(err){ kiel.response(req, res, {data : err}, 500); return;}
 								if(user.length != 0) {
 									kiel.response(req, res, {users:user}, 200);
@@ -166,8 +211,8 @@ user = function(kiel){
 		},
 
 		post : {
-			register : function(req,res) {
-				var rqrd = ['email','app_id','fname','lname','roles']
+			register : function (req,res) {
+				var rqrd = ['email','app_id','fname','lname','scopes']
 					, rst;
 					console.log(req.post_args);
 
@@ -175,9 +220,9 @@ user = function(kiel){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
-				db._instance().collection('users',function(err,_collection){
+				db._instance().collection('users',function (err,_collection){
 					if(err){ kiel.response(req, res, {data : err}, 500); return;}
-					_collection.find({email:req.post_args.email}).toArray(function(err,d){
+					_collection.find({email:req.post_args.email}).toArray(function (err,d){
 						if(d.length > 0){
 							kiel.response(req, res, {data :"Email is already associated with an existing account."}, 400);
 						} else {
@@ -194,7 +239,7 @@ user = function(kiel){
 		}, 
 
 		put : {
-			index : function(req,res) {
+			index : function (req,res) {
 				var rqrd = ['access_token']
 					, user_id
 					, rst
@@ -208,12 +253,12 @@ user = function(kiel){
 				req.put_args.user_id && ((scps = ['users.edit','admin.view']) && (admin_edit = true));
 				
 				//checks the access token to proper edit mapping. Allows user to only edit themselves
-				kiel.utils.has_scopes(scps, null, req.put_args.access_token, function(err,data){
+				kiel.utils.has_scopes(scps, null, req.put_args.access_token, function (err,data){
 					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
 					user_id = admin_edit?req.put_args.user_id:data.user_id;
-					db._instance().collection('users',function(err,_collection){
+					db._instance().collection('users',function (err,_collection){
 						if(err) {callback({message:err,response_code:500});return;}
-						_collection.find({_id:user_id}).toArray(function(err,user) {
+						_collection.find({_id:user_id}).toArray(function (err,user) {
 							if(err) { kiel.response(req, res, {data : err}, 500);return;}
 							if(user.length === 0) {
 								kiel.response(req, res, {data : "User not found."}, 404);
@@ -241,7 +286,7 @@ user = function(kiel){
 								req.put_args.referrer			&& (usr['referrer'] = req.put_args.referrer );
 								usr.profile_info['updated_at'] = dt.getTime();
 								
-								_collection.update({_id:user_id}, usr,function(err,d) {
+								_collection.update({_id:user_id}, usr,function (err,d) {
 									if(err) { kiel.response(req, res, {data : err}, 500);return;}
 									if(d === 1) {
 										var ret = {
@@ -272,7 +317,7 @@ user = function(kiel){
 		},
 
 		delete : {
-			index : function(req,res) {
+			index : function (req,res) {
 				var rqrd = ['user_id']
 					, user_id
 					, rst
@@ -283,24 +328,24 @@ user = function(kiel){
 					return;
 				}
 
-				db._instance().collection('access_token',function(err,_collection) {
+				db._instance().collection('access_token',function (err,_collection) {
 					if(err) {
 						kiel.response(req, res, {data : err}, 500);
 						return;
 					}
-					_collection.remove({user_id:req.delete_args.user_id},function(err,dcs) {
+					_collection.remove({user_id:req.delete_args.user_id},function (err,dcs) {
 						if (err) {
 							kiel.response(req, res, {data : err}, 500);
 							return;
 						}
 					});
 				});
-				db._instance().collection('users',function(err,_collection) {
+				db._instance().collection('users',function (err,_collection) {
 					if(err) {
 						kiel.response(req, res, {data : err}, 500);
 						return;
 					}
-					_collection.remove({user_id:req.delete_args.user_id},function(err,dcs) {
+					_collection.remove({user_id:req.delete_args.user_id},function (err,dcs) {
 						if (err) {
 							kiel.response(req, res, {data : err}, 500);
 							return;

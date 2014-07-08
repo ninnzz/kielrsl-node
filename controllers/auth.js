@@ -153,27 +153,27 @@ auth = function(kiel){
 									scps.push({scope: req.get_args.scope_token+'.'+sc.trim() });
 								});
 
-								db._instance().collection('scopes',function(err,_collection) {
-									if(err) {
-										kiel.response(req, res, {data : err}, 500);
-										return;
-									}
-									_collection.find({$or:scps}).toArray(function(err,d){
-										if(err) {
-											kiel.response(req, res, {data : err}, 500);
-											return;
-										}
-										console.log(d);
-										console.log('-----------------');
-										console.log(scps);
-										if(d.length === scps.length) {
-											var d = new Date();
+								// db._instance().collection('scopes',function(err,_collection) {
+								// 	if(err) {
+								// 		kiel.response(req, res, {data : err}, 500);
+								// 		return;
+								// 	}
+								// 	_collection.find({$or:scps}).toArray(function(err,d){
+								// 		if(err) {
+								// 			kiel.response(req, res, {data : err}, 500);
+								// 			return;
+								// 		}
+								// 		console.log(d);
+								// 		console.log('-----------------');
+								// 		console.log(scps);
+								// 		if(d.length === scps.length) {
+								// 			var d = new Date();
 											save_request_token(req,res,{request_token: kiel.utils.hash(d.getTime())+kiel.utils.random(),user_id: req.get_args.user_id,app_id:req.get_args.app_id,scopes:scps,created_at:d.getTime(),expires:d.getTime()+60*60*1000});
-										} else {
-											kiel.response(req, res, {data : "Error in validating scopes"}, 400);									
-										}
-									});
-								});
+								// 		} else {
+								// 			kiel.response(req, res, {data : "Error in validating scopes"}, 400);									
+								// 		}
+								// 	});
+								// });
 
 							} catch (err){
 								kiel.response(req, res, {data : "Error parsing scopes: "+err}, 500);
