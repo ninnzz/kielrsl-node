@@ -113,14 +113,17 @@ user = function (kiel){
 			db._instance().collection('access_tokens',function(err,_collection){
 				_collection.insert(access_token,function(err) {
 					if(err) {
+						kiel.response(req, res, {data : err}, 500);		
 						console.log(err); return;
 					}
 					db._instance().collection('oauth_session_scopes',function(err,_collection){
 						if(err) {
+							kiel.response(req, res, {data : err}, 500);	
 							console.log('Failed Loading the scopes for access_token: ' + access_token.access_token); return;
 						}
 						_collection.insert(oauth_scopes,function(err){
 							if(err) {
+								kiel.response(req, res, {data : err}, 500);
 								console.log('Failed saving oauth_scopes: '+ err ); return;
 							}
 
