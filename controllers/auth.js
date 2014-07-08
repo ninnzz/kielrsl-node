@@ -167,7 +167,7 @@ auth = function(kiel){
 								// 		console.log('-----------------');
 								// 		console.log(scps);
 								// 		if(d.length === scps.length) {
-								// 			var d = new Date();
+											var d = new Date();
 											save_request_token(req,res,{request_token: kiel.utils.hash(d.getTime())+kiel.utils.random(),user_id: req.get_args.user_id,app_id:req.get_args.app_id,scopes:scps,created_at:d.getTime(),expires:d.getTime()+60*60*1000});
 								// 		} else {
 								// 			kiel.response(req, res, {data : "Error in validating scopes"}, 400);									
