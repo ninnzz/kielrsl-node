@@ -121,7 +121,7 @@ user = function (kiel){
 						}
 						_collection.insert(oauth_scopes,function(err){
 							if(err) {
-								console.log('Failed saving oauth_scopes: '+access_token.access_token); return;
+								console.log('Failed saving oauth_scopes: '+ err ); return;
 							}
 
 							kiel.response(req, res, {data : usr, access_token : access_token.access_token, expires : access_token.expires}, 200);
