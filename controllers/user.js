@@ -151,7 +151,8 @@ user = function (kiel){
 					, limit = 10
 					, skip = 0
 					, sort = '_id'
-					, sort_order = 1;
+					, sort_order = 1
+					, user_ids = [];
 				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
@@ -186,7 +187,13 @@ user = function (kiel){
 							else if ( !isNaN(req.get_args[prop]) ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
 							} else if (!req.get_args.self && prop == 'user_id') {
-								condition._id = req.get_args.user_id 
+					
+								(req.get_args.user_id.split(',')).forEach(function (u) {
+									user_ids.push({ _id : u.trim() });
+								});
+					
+								condition['$or'] = user_ids; 
+
 							} else if (prop != 'user_id') {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop];
 							}
