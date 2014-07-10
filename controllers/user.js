@@ -8,7 +8,8 @@ user = function (kiel){
 		var usr = {}
 			, d = new Date()
 			, scps = ['self.edit']
-			, final_scps;
+			, final_scps
+			, roles;
 				
 		/*** IMPORTANT ***/
 		// for new projects that wants to use the user class, add your own custom user implementation here
@@ -34,6 +35,7 @@ user = function (kiel){
 		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
 		req.post_args.reason		&& (usr['reason'] = req.post_args.reason );
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
+		req.post_args.roles			&& (roles = req.post_args.roles );
 		console.dir(req.post_args);
 		console.dir(usr);
 
@@ -46,7 +48,9 @@ user = function (kiel){
 			return scps.indexOf(elem) == pos;
 		}); 
 
-		usr['data_' + app._id]	= {admin:false};
+		usr['data_' + app._id]	= {	admin: false,
+									roles: roles
+								};
 		
 		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
 		usr['created_at'] 		= d.getTime();
