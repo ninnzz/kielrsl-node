@@ -35,6 +35,7 @@ user = function (kiel){
 		req.post_args.postal_code	&& (usr.contact_info.address['postal_code'] = req.post_args.postal_code );
 		req.post_args.reason		&& (usr['reason'] = req.post_args.reason );
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
+		req.post_args.referral_link		&& (usr['referral_link'] = req.post_args.referral_link );
 		req.post_args.roles			&& (roles = req.post_args.roles );
 		console.dir(req.post_args);
 		console.dir(usr);
