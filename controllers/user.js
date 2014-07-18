@@ -179,7 +179,7 @@ user = function (kiel){
 
 				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function (err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
-					var selectables = {'_id':1,'email':1,'profile_info':1,'email_confirmed':1,'active':1,'referrer':1,'is_system_admin':1,'contact_info':1,'created_at':1,'updated_at':1};
+					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1};
 					
 					selectables['data_' + d.app_id] = 1;
 					req.get_args.self && ( condition._id = d.user_id );
