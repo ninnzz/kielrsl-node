@@ -207,7 +207,7 @@ user = function (kiel){
 					db._instance().collection('users',function (err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
 						console.log("-----------------------");
-						console.log(s_condition);
+						console.log(condition);
 
 						_collection.find(condition ,selectables)
 							.sort(s_condition)
