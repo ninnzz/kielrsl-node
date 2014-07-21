@@ -148,7 +148,7 @@ user = function (kiel){
 		get : {
 			index : function (req,res) {
 				var rqrd = ['access_token']
-					, scopes = []
+					, scopes = ['self.view']
 					, rst
 					, uid
 					, condition = {}
@@ -162,8 +162,6 @@ user = function (kiel){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
-
-				req.get_args.self && (scopes = ['self.view']);
 	
 				req.get_args.limit 	&& ( limit = req.get_args.limit );
 				req.get_args.skip 	&& ( skip = req.get_args.skip );
