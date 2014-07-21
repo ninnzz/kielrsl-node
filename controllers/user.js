@@ -148,7 +148,7 @@ user = function (kiel){
 		get : {
 			index : function (req,res) {
 				var rqrd = ['access_token']
-					, scopes
+					, scopes = []
 					, rst
 					, uid
 					, condition = {}
