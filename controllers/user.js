@@ -141,9 +141,15 @@ user = function (kiel){
 					});
 				});
 			});
-
-
-
+	}
+	, check_prepended = function(prop, val) {
+		if( prop.replace('exist.','') !== prop ) {
+			return { 
+						p :  prop.replace('exist.',''),
+						val : { $exists : true}
+					};
+		}
+		return false;
 	};
 
 
@@ -160,6 +166,8 @@ user = function (kiel){
 					, skip = 0
 					, sort = '_id'
 					, sort_order = 1
+					, pp = ''
+					, prepend
 					, user_ids = [];
 				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
@@ -192,10 +200,9 @@ user = function (kiel){
 						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
 							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false')
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
-							else if ( !isNaN(req.get_args[prop]) ) {
+							else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
 							} else if (!req.get_args.self && prop == 'user_id') {
-					
 								(req.get_args.user_id.split(',')).forEach(function (u) {
 									user_ids.push({ _id : u.trim() });
 								});
@@ -203,13 +210,19 @@ user = function (kiel){
 								condition['$or'] = user_ids; 
 
 							} else if (prop != 'user_id') {
-								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop];
+								pp = prop.replace('app.',  'data_' + d.app_id + '.');
+								prepend = check_prepended(pp, req.get_args[prop]);
+								if (prepend) {
+									condition[prepend.p] = prepend.val;
+								} else {
+									condition[pp] = req.get_args[prop];
+								}
 							}
 						}
 					}
 					db._instance().collection('users',function (err,_collection) {
 						if(err){ kiel.response(req, res, {data : err}, 500); return;}
-						console.log("-----------------------");
+						console.log("=============== Search Condition ===============");
 						console.log(condition);
 
 						_collection.find(condition ,selectables)
