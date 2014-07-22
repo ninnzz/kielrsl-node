@@ -201,6 +201,11 @@ auth = function(kiel){
 			request_token.scopes.forEach(function(sc) {
 				oauth_scopes.push({_id:kiel.utils.hash(access_token.access_token+sc.scope),'access_token': access_token.access_token,'app_id':access_token.app_id, 'scope':sc.scope,'created_at':dt.getTime()});
 			});
+			console.log('INSERT SCOPES 1');
+			console.log(oauth_scopes);
+			console.log('================================');
+
+
 			_collection.insert(access_token,function(err) {
 				if(err) {
 					kiel.response(req, res, {data : err}, 500);
@@ -336,6 +341,9 @@ auth = function(kiel){
 			scps.forEach(function(sc) {
 				oauth_scopes.push({_id:kiel.utils.hash(data.access_token+sc.scope),'access_token': data.access_token,'app_id':data.app_id, 'scope':sc.scope,'created_at':dt.getTime()});
 			});
+			console.log('INSERT SCOPES 2');
+			console.log(oauth_scopes);
+			console.log('================================');
 			db._instance().collection('oauth_session_scopes',function(err,_collection){
 				if(err) { kiel.response(req, res, {data : "Something went wrong while adding scopes:"+err}, 500);return;}
 				_collection.insert(oauth_scopes,{continueOnError: true, safe: true},function(err){

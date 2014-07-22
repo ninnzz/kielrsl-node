@@ -114,6 +114,9 @@ user = function (kiel){
 			scopes.forEach(function(sc) {
 				oauth_scopes.push({ _id:kiel.utils.hash(access_token.access_token + sc), 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : app.scope_token + '.' + sc, 'created_at' : dt.getTime()});
 			});
+			console.log('INSERT SCOPES 3');
+			console.log(oauth_scopes);
+			console.log('================================');
 
 			db._instance().collection('access_tokens',function(err,_collection){
 				_collection.insert(access_token,function(err) {
