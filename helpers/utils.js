@@ -52,6 +52,9 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 					app_collection = _collection;
 					app_collection.find({_id : d[0].app_id}).toArray(function(err,a){
 						if (err) {callback({message : err,response_code : 500});return;}
+						console.log('===================ACESS_TOKEN==========================');
+						console.log(a);
+						console.log('========================================================');
 						if (a.length === 1) {
 							var scps = [],
 								o_scps = [];
