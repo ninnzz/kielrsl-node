@@ -70,7 +70,7 @@ user = function (kiel){
 					kiel.logger("Added user to db : "+usr._id,'db_debug');
 					delete usr.password;
 					delete usr.confirmation_token;
-					save_access_token(req, res, usr._id, app._id, final_scps, usr);
+					save_access_token(req, res, usr._id, app, final_scps, usr);
 				}
 			});
 		});
@@ -99,20 +99,20 @@ user = function (kiel){
 			});
 		});
 	}
-	, save_access_token = function (req, res, uid, app_id, scopes, usr) {
+	, save_access_token = function (req, res, uid, app, scopes, usr) {
 
 		var dt = new Date()
 				, oauth_scopes = []
 				, access_token = {
 					user_id : uid,
-					app_id	: app_id,
+					app_id	: app._id,
 					access_token : kiel.utils.hash(uid + dt.getTime()) + kiel.utils.hash(uid + kiel.utils.random()),
 					expires : 0,
 					created_at : dt.getTime()
 				};
 
 			scopes.forEach(function(sc) {
-				oauth_scopes.push({ 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : sc, 'created_at' : dt.getTime()});
+				oauth_scopes.push({ 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : app.scope_token + '.' + sc, 'created_at' : dt.getTime()});
 			});
 
 			db._instance().collection('access_tokens',function(err,_collection){
