@@ -55,7 +55,6 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 						if (a.length === 1) {
 							var scps = [],
 								o_scps = [];
-							console.log(scope);
 							scope.forEach(function(sc) {
 								//add function that will remove duplicate
 								scps.push({app_id : a[0]._id,scope :  a[0].scope_token+'.'+sc ,access_token : access_token});
@@ -74,6 +73,7 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 							db._instance().collection('oauth_session_scopes',function(err,_collection){
 								if (err) {callback({message : err,response_code : 500});return;}
 								os_collection = _collection;
+								console.log(scps);
 								os_collection.find({$or : scps}).toArray(function(err, sc){
 									if (err) {callback({message : err,response_code : 500});return;}
 									console.log('======RETURN SCOPES======');
