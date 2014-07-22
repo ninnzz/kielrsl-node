@@ -112,7 +112,7 @@ user = function (kiel){
 				};
 
 			scopes.forEach(function(sc) {
-				oauth_scopes.push({ 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : app.scope_token + '.' + sc, 'created_at' : dt.getTime()});
+				oauth_scopes.push({ _id:kiel.utils.hash(access_token.access_token + sc), 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : app.scope_token + '.' + sc, 'created_at' : dt.getTime()});
 			});
 
 			db._instance().collection('access_tokens',function(err,_collection){
