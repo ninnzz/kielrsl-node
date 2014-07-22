@@ -114,12 +114,6 @@ user = function (kiel){
 			scopes.forEach(function(sc) {
 				oauth_scopes.push({ _id:kiel.utils.hash(access_token.access_token + app.scope_token + '.' + sc), 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : app.scope_token + '.' + sc, 'created_at' : dt.getTime()});
 			});
-
-			scps.forEach(function(sc) {
-				oauth_scopes.push({ _id:kiel.utils.hash(data.access_token+sc.scope),'access_token': data.access_token,'app_id':data.app_id, 'scope':sc.scope,'created_at':dt.getTime()});
-			});
-
-
 			console.log('INSERT SCOPES 3');
 			console.log(oauth_scopes);
 			console.log('================================');
