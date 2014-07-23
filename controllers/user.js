@@ -146,7 +146,7 @@ user = function (kiel){
 		if( prop.replace('exist.','') !== prop ) {
 			return { 
 						p :  prop.replace('exist.',''),
-						val : { $exists : true}
+						val : { $exists : val}
 					};
 		}
 		return false;
@@ -196,10 +196,17 @@ user = function (kiel){
 					req.get_args.self && ( condition._id = d.user_id );
 					
 					for (var prop in req.get_args) {
-						
+						pp = prop.replace('app.',  'data_' + d.app_id + '.');
 						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
 							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false')
-								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = (req.get_args[prop] == 'true' ? true : false);
+
+								prepend = check_prepended(pp, (req.get_args[prop] == 'true' ? true : false) );
+								if (prepend) {
+									condition[prepend.p] = prepend.val;
+								} else {
+									condition[pp] = req.get_args[prop];
+								}
+
 							else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
 							} else if (!req.get_args.self && prop == 'user_id') {
@@ -210,7 +217,6 @@ user = function (kiel){
 								condition['$or'] = user_ids; 
 
 							} else if (prop != 'user_id') {
-								pp = prop.replace('app.',  'data_' + d.app_id + '.');
 								prepend = check_prepended(pp, req.get_args[prop]);
 								if (prepend) {
 									condition[prepend.p] = prepend.val;
