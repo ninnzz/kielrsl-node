@@ -198,7 +198,7 @@ user = function (kiel){
 					for (var prop in req.get_args) {
 						pp = prop.replace('app.',  'data_' + d.app_id + '.');
 						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
-							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false')
+							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false') {
 
 								prepend = check_prepended(pp, (req.get_args[prop] == 'true' ? true : false) );
 								if (prepend) {
@@ -206,8 +206,7 @@ user = function (kiel){
 								} else {
 									condition[pp] = req.get_args[prop];
 								}
-
-							else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
+							} else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
 							} else if (!req.get_args.self && prop == 'user_id') {
 								(req.get_args.user_id.split(',')).forEach(function (u) {
