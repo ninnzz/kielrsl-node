@@ -22,7 +22,7 @@ auth = function(kiel){
 					return;
 				}
 				
-				req.post_args.username && req.post_args.password && ( crdntls = {email : req.post_args.username});
+				req.post_args.username && req.post_args.password && ( crdntls = {username : req.post_args.username});
 				req.post_args.email && (req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
 		
 				slctbl = {"email":1,"profile_info":1,"password":1,"google_access_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
