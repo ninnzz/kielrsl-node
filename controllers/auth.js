@@ -21,7 +21,10 @@ auth = function(kiel){
 					kiel.response(req, res, {data : err}, 500);
 					return;
 				}
-				(req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
+				
+				req.post_args.username && req.post_args.password && ( crdntls = {email : req.post_args.username});
+				req.post_args.email && (req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
+		
 				slctbl = {"email":1,"profile_info":1,"password":1,"google_access_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
 				slctbl['data_' + app._id] = 1;
 				
@@ -408,10 +411,14 @@ auth = function(kiel){
 
 		post : {
 			login : function(req,res) {
-				var rqrd = ['email','app_id','source']
+				var rqrd = ['app_id','source']
 					, rst;
 				if(!(rst = kiel.utils.required_fields(rqrd,req.post_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
+					return;
+				}
+				if (req.post_args.email || req.post_args.username ) {
+					kiel.response(req, res, {data : "Missing username or email "}, 500);
 					return;
 				}
 				find_app(null,req,res,req.post_args,login_check);
