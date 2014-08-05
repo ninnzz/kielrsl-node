@@ -417,7 +417,7 @@ auth = function(kiel){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
-				if (!req.post_args.email || !req.post_args.username ) {
+				if (!req.post_args.email && !req.post_args.username ) {
 					kiel.response(req, res, {data : "Missing username or email "}, 500);
 					return;
 				}
