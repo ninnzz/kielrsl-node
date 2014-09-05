@@ -16,9 +16,9 @@ user = function (kiel){
 		// you can create or use the existing user function just redefine the fields of your user object
 
 		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
-		usr['contact_info'] 	= {phone : [], twitter : "", facebook : ""};
+		usr['contact_info'] 	= {twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
-
+		req.post_args.phones 			&& (usr.contact_info['phones'] = req.put_args.phones);
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
 		req.post_args.fname 		&& (usr.profile_info['fname'] = req.post_args.fname );
@@ -320,7 +320,7 @@ user = function (kiel){
 								req.put_args.city				&& (usr.contact_info.address['city'] = req.put_args.city );
 								req.put_args.state				&& (usr.contact_info.address['state'] = req.put_args.state );
 								req.put_args.country			&& (usr.contact_info.address['country'] = req.put_args.country );
-								req.put_args.postal_code			&& (usr.contact_info.address['postal_code'] = req.put_args.putal_code );
+								req.put_args.postal_code			&& (usr.contact_info.address['postal_code'] = req.put_args.postal_code );
 								req.put_args.referrer			&& (usr['referrer'] = req.put_args.referrer );
 								usr.profile_info['updated_at'] = dt.getTime();
 								
