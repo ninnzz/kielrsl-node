@@ -1,9 +1,9 @@
 
 var database = {
 	mysql	: {
-		host     : 'localhost',
+		host     : '192.168.0.1',
 		user     : 'root',
-		password : 'pepermint',
+		password : '',
 		database : 'earnings_report'
 	},
 	mongodb	: {
