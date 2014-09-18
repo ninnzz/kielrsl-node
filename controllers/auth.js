@@ -232,7 +232,7 @@ auth = function (kiel){
 				});
 				kiel.response(req, res, {access_token : access_token.access_token, expires:access_token.expires}, 200);
 			});
-		}, save_access_token = function (req, req, resuest_token) {
+		}, save_access_token = function (req, res, resuest_token) {
 			db._instance().collection('access_tokens',function (err,_collection) {
 				if(err) {kiel.response(req, res, {data : err}, 500);return;}	
 				_collection.find({user_id:req.get_args.user_id}).toArray(function (err,d) {
