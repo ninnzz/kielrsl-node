@@ -18,6 +18,8 @@ user = function (kiel){
 		usr['profile_info'] 	= {custom_url : "", avatar : "", paypal : ""};
 		usr['contact_info'] 	= {twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
+		usr.pfl = 'none';
+
 		req.post_args.phones 			&& (usr.contact_info['phones'] = req.post_args.phones);
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
 		req.post_args.password 		&& (usr['password'] = kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt)  );
@@ -37,10 +39,8 @@ user = function (kiel){
 		req.post_args.referrer		&& (usr['referrer'] = req.post_args.referrer );
 		req.post_args.referral_link		&& (usr['referral_link'] = req.post_args.referral_link );
 		req.post_args.roles			&& (roles = req.post_args.roles.split(',').map(function (sc) { return sc.trim(); }) );
-		console.dir(req.post_args);
-		console.dir(usr);
-
-
+		req.post_args.password		&& (usr['pfl'] = 'internal');
+	
 		(req.post_args.scopes.split(',')).forEach(function (sc) {
 			scps.push(sc.trim());
 		});
