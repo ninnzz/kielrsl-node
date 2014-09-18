@@ -397,7 +397,8 @@ auth = function (kiel){
 								sort({expires: -1}).
 								toArray(function (err, prt_data) { 
 									if (err) { kiel.response(req, res, {data : err}, 500);return;}
-										if (prt_data.length < 1) {
+									
+									if (prt_data.length < 1 && _data[0].pfl === 'internal') {
 										kiel.response(req, res, {data : "Invalid or expired token."}, 500);
 										return;
 									} 
