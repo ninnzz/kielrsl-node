@@ -37,6 +37,9 @@ auth = function (kiel){
 						return;
 					}
 					if(d.length === 1) {
+						console.log('passss');
+						console.log(d[0].password);
+						console.log(kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt));
 						req.post_args.source === "self" && d[0].password !== kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
 						if(er){
 							kiel.response(req, res, {data : er}, 400);
@@ -410,7 +413,8 @@ auth = function (kiel){
 									console.log('----user_id=====');
 									console.log(u_id);
 									console.log(prt_data[0]);
-									console.log(_data[0]._id);
+									console.log(_data[0]);
+
 									db._instance().collection('users',function (err, u_collection){
 										u_collection.update({_id: u_id}, {$set: {pfl: 'internal', password: kiel.utils.hash( kiel.utils.hash(data.password) + kiel.application_config.salt)  } }, function (ers, u_data) {
 											if (err) { kiel.response(req, res, {data : err}, 500);return;}
