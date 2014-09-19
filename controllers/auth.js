@@ -406,9 +406,9 @@ auth = function (kiel){
 									console.log(kiel.utils.hash( kiel.utils.hash(data.password) + kiel.application_config.salt));
 									console.log(prt_data);
 
-
+									u_id = prt_data[0].user_id || _data[0].id;
 									db._instance().collection('users',function (err, u_collection){
-										u_collection.update({_id: prt_data[0].user_id}, {$set: {pfl: 'internal', password: kiel.utils.hash( kiel.utils.hash(data.password) + kiel.application_config.salt)  } }, function (ers, u_data) {
+										u_collection.update({_id: u_id}, {$set: {pfl: 'internal', password: kiel.utils.hash( kiel.utils.hash(data.password) + kiel.application_config.salt)  } }, function (ers, u_data) {
 											if (err) { kiel.response(req, res, {data : err}, 500);return;}
 											if (u_data.data < 1) {
 												return kiel.response(req, res, {data : "Something went wrong."}, 500);
