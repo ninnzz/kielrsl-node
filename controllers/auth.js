@@ -413,6 +413,7 @@ auth = function (kiel){
 											if (u_data.data < 1) {
 												return kiel.response(req, res, {data : "Something went wrong."}, 500);
 											}
+											console.log(u_data);
 											prt_collection.update({email: data.email, valid: 1}, {$set: {valid: 0}}, {multi: true}, function (err, d) {
 												if(err) { kiel.response(req, res, {data : err}, 500);return;}
 												return kiel.response(req, res, {data : d}, 200);
