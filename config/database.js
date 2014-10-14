@@ -1,14 +1,14 @@
 
 var database = {
 	mysql	: {
-		host     : '192.168.0.1',
+		host     : 'localhost',
 		user     : 'root',
 		password : '',
 		database : 'earnings_report'
 	},
 	mongodb	: {
 		name : "freedom",
-		host : "192.168.0.10",
+		host : "localhost",
 		port : 27017
 	}
 }

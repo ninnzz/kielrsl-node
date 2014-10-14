@@ -262,7 +262,7 @@ user = function (kiel){
 					if(err){ kiel.response(req, res, {data : err}, 500); return;}
 					_collection.find({email:req.post_args.email}).toArray(function (err,d){
 						if(d.length > 0){
-							kiel.response(req, res, {data :"Email is already associated with an existing account."}, 400);
+							kiel.response(req, res, {data :"Email is already associated with an existing account."}, 404);
 						} else {
 							try{
 								valid_app(req,res);

@@ -60,7 +60,7 @@ app = function(kiel){
 		},
 
 		post : {
-			own_app_data : function(req,res) {
+			own_app_data : function(req, res) {
 				var rqrd = ['app_id','access_token','user_id','app_data']
 					, rst;
 				if(!(rst = kiel.utils.required_fields(rqrd,req.post_args)).stat){
