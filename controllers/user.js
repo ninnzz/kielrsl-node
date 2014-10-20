@@ -5,11 +5,11 @@ var user
 user = function (kiel){
 
 	var input_user = function (req,res,app) {
-		var usr = {}
-			, d = new Date()
-			, scps = ['self.edit']
-			, final_scps
-			, roles;
+		var usr = {},
+			d = new Date(),
+			scps = ['self.edit'],
+			final_scps,
+			roles;
 				
 		/*** IMPORTANT ***/
 		// for new projects that wants to use the user class, add your own custom user implementation here
@@ -19,6 +19,7 @@ user = function (kiel){
 		usr['contact_info'] 	= {twitter : "", facebook : ""};
 		usr.contact_info['address'] = {};
 		usr.pfl = 'none';
+		usr.language = 'EN';
 
 		req.post_args.phones 			&& (usr.contact_info['phones'] = req.post_args.phones);
 		req.post_args.email 		&& (usr['email'] = req.post_args.email );
@@ -49,9 +50,11 @@ user = function (kiel){
 			return scps.indexOf(elem) == pos;
 		}); 
 
-		usr['data_' + app._id]	= {	admin: false,
-									roles: roles
-								};
+		usr['data_' + app._id]	= 	{	
+										admin: false,
+										roles: roles,
+										forum_username: ''
+									};
 		
 		usr['_id'] = kiel.utils.hash(d.getTime() + kiel.utils.random() + kiel.utils.hash(req.post_args.email) + kiel.application_config.salt)
 		usr['created_at'] 		= d.getTime();
@@ -74,10 +77,8 @@ user = function (kiel){
 				}
 			});
 		});
-
-
-	}
-	, valid_app = function (req,res) {
+	},
+	valid_app = function (req,res) {
 		db._instance().collection('app',function (err,_collection){
 			if(err) { kiel.response(req, res, {data : err}, 404);return;}
 
@@ -98,8 +99,8 @@ user = function (kiel){
 				}
 			});
 		});
-	}
-	, save_access_token = function (req, res, uid, app, scopes, usr) {
+	},
+	save_access_token = function (req, res, uid, app, scopes, usr) {
 
 		var dt = new Date()
 				, oauth_scopes = []
@@ -114,7 +115,7 @@ user = function (kiel){
 			scopes.forEach(function(sc) {
 				oauth_scopes.push({ _id:kiel.utils.hash(access_token.access_token + app.scope_token + '.' + sc), 'access_token' : access_token.access_token, 'app_id' : access_token.app_id, 'scope' : app.scope_token + '.' + sc, 'created_at' : dt.getTime()});
 			});
-			console.log('INSERT SCOPES 3');
+			console.log('INSERT SCOPES');
 			console.log(oauth_scopes);
 			console.log('================================');
 
@@ -141,8 +142,8 @@ user = function (kiel){
 					});
 				});
 			});
-	}
-	, check_prepended = function(prop, val) {
+	},
+	check_prepended = function(prop, val) {
 		if( prop.replace('exist.','') !== prop ) {
 			return { 
 						p :  prop.replace('exist.',''),
@@ -156,19 +157,20 @@ user = function (kiel){
 	return {
 		get : {
 			index : function (req,res) {
-				var rqrd = ['access_token']
-					, scopes = ['self.view']
-					, rst
-					, uid
-					, condition = {}
-					, s_condition = {}
-					, limit = 10
-					, skip = 0
-					, sort = '_id'
-					, sort_order = 1
-					, pp = ''
-					, prepend
-					, user_ids = [];
+				var rqrd = ['access_token'],
+					scopes = ['self.view'],
+					rst,
+					uid,
+					prepend,
+					condition = {},
+					s_condition = {},
+					limit = 10,
+					skip = 0,
+					sort = '_id',
+					sort_order = 1,
+					pp = '',
+					user_ids = [];
+				
 				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
@@ -188,7 +190,7 @@ user = function (kiel){
 
 				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function (err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
-					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1};
+					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'language': 1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1};
 					//TODO change selectables here depending on the scopes
 
 
@@ -303,6 +305,8 @@ user = function (kiel){
 							} else {
 								var usr = user[0]
 									,dt = new Date();
+								
+								usr.contact_info.address = usr.contact_info.address || {};
 
 								req.put_args.password 			&& (usr.profile_info['password'] = kiel.utils.hash(kiel.utils.hash(req.put_args.password) + kiel.application_config.salt) );
 								req.put_args.fname 				&& (usr.profile_info['fname'] = req.put_args.fname );
@@ -322,6 +326,7 @@ user = function (kiel){
 								req.put_args.country			&& (usr.contact_info.address['country'] = req.put_args.country );
 								req.put_args.postal_code			&& (usr.contact_info.address['postal_code'] = req.put_args.postal_code );
 								req.put_args.referrer			&& (usr['referrer'] = req.put_args.referrer );
+								req.put_args.language 			&& (usr.language = req.put_args.language);
 								usr.profile_info['updated_at'] = dt.getTime();
 								
 								_collection.update({_id:user_id}, usr,function (err,d) {

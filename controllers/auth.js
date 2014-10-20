@@ -82,8 +82,10 @@ auth = function (kiel){
 							kiel.logger("User identity confirmed [login]: "+d[0]._id,'access')
 							kiel.response(req, res, {user_data : d[0],scope_token:app.scope_token}, 200);
 						}
+					} else if(d.length === 0) {
+						kiel.response(req, res, {data : "That email does not belong to any account.", new_user : true}, 400);
 					} else {
-						kiel.response(req, res, {data : "That email does not belong to any account.", new_user : true}, 404);
+						kiel.response(req, res, {data : "Email is already associated with an existing account.", new_user : true}, 404);
 					}
 				});
 			});		
