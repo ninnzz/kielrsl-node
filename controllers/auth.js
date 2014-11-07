@@ -83,9 +83,9 @@ auth = function (kiel){
 							kiel.response(req, res, {user_data : d[0],scope_token:app.scope_token}, 200);
 						}
 					} else if(d.length === 0) {
-						kiel.response(req, res, {data : "That email does not belong to any account.", new_user : true}, 400);
+						kiel.response(req, res, {data : "That email does not belong to any account.", new_user : true}, 404);
 					} else {
-						kiel.response(req, res, {data : "Email is already associated with an existing account.", new_user : true}, 404);
+						kiel.response(req, res, {data : "Email is already associated with an existing account.", new_user : true}, 400);
 					}
 				});
 			});		

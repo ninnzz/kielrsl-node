@@ -42,7 +42,7 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 		if (err) {callback({message : err,response_code : 500});return;}
 		ac_collection = _collection;
 		ac_collection.find({access_token : access_token}).toArray(function(err,d) {
-			if (d.length === 1) {
+			if (d && d.length === 1) {
 				if (d[0].expires !== 0 && d[0].expires < dt.getTime()){
 					callback({message : 'Invalid access_token. Access_token is expired.',response_code : 400});
 					return;
