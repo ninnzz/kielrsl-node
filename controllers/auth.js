@@ -1,7 +1,8 @@
 var auth
 	, db = require(__dirname + "/../helpers/ndb")
-	, curl = require('request');
-
+	, curl = require('request'),
+    crypto = require('crypto'),
+    qs = require('querystring');
 
 
 	/*** IMPORTANT ***/
@@ -21,16 +22,18 @@ auth = function (kiel){
 					kiel.response(req, res, {data : err}, 500);
 					return;
 				}
-				
+
 				req.post_args.username && req.post_args.password && ( crdntls = {username : req.post_args.username});
 				req.post_args.email && (req.post_args.password || req.post_args.google_access_token) && (crdntls = {email:req.post_args.email});
-		
+
 				slctbl = {"email":1,"profile_info":1,"password":1,"google_access_token":1,"email_confirmed":1,"is_system_admin":1,"google_credentials":1,"contact_info":1};
 				slctbl['data_' + app._id] = 1;
-				
+
 				if(Object.keys(crdntls).length === 0)
 					throw "Invalid credentials for login.";
-				
+
+                console.log()
+
 				_collection.find(crdntls,slctbl).toArray(function (err, d){
 					if(err){
 						kiel.response(req, res, {data : err}, 500);
@@ -41,7 +44,7 @@ auth = function (kiel){
 						console.log(d[0]._id);
 						console.log(d[0].password);
 						console.log(kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt));
-						req.post_args.source === "self" && d[0].password !== kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
+						!!~['self', 'position_music'].indexOf(req.post_args.source) && d[0].password !== kiel.utils.hash(kiel.utils.hash(req.post_args.password) + kiel.application_config.salt) && (er = "Password does not match.");
 						if(er){
 							kiel.response(req, res, {data : er}, 400);
 							return;
@@ -79,6 +82,7 @@ auth = function (kiel){
 							}
 							delete d[0].password;
 							delete d[0].google_access_token;
+							console.log("User identity confirmed [login]: "+d[0]._id,'access')
 							kiel.logger("User identity confirmed [login]: "+d[0]._id,'access')
 							kiel.response(req, res, {user_data : d[0],scope_token:app.scope_token}, 200);
 						}
@@ -88,7 +92,7 @@ auth = function (kiel){
 						kiel.response(req, res, {data : "Email is already associated with an existing account.", new_user : true}, 400);
 					}
 				});
-			});		
+			});
 		}, add_app = function (user_collection,app,user) {
 			console.log('added new scopes');
 			var crd = {};
@@ -108,6 +112,7 @@ auth = function (kiel){
 						kiel.response(req, res, {data : err}, 500);
 						return;
 					}
+
 					if(d.length === 1) {
 						try{
 							cb(req,res,d[0],data);
@@ -121,7 +126,7 @@ auth = function (kiel){
 			});
 		}, save_request_token = function (req,res,r_token_object) {
 
-			
+
 			db._instance().collection('request_tokens',function (err,_collection) {
 				if(err) {
 					kiel.response(req, res, {data : err}, 500);
@@ -132,7 +137,7 @@ auth = function (kiel){
 						kiel.response(req, res, {data : err}, 500);
 						return;
 					}
-					_collection.insert(r_token_object, function (err) { 
+					_collection.insert(r_token_object, function (err) {
 						if(err) { kiel.response(req, res, {data : err}, 500);return;}
 						kiel.response(req, res, {request_token : r_token_object.request_token, expires : r_token_object.expires}, 200);
 					});
@@ -175,7 +180,7 @@ auth = function (kiel){
 											var d = new Date();
 											save_request_token(req,res,{request_token: kiel.utils.hash(d.getTime())+kiel.utils.random(),user_id: req.get_args.user_id,app_id:req.get_args.app_id,scopes:scps,created_at:d.getTime(),expires:d.getTime()+60*60*1000});
 								// 		} else {
-								// 			kiel.response(req, res, {data : "Error in validating scopes"}, 400);									
+								// 			kiel.response(req, res, {data : "Error in validating scopes"}, 400);
 								// 		}
 								// 	});
 								// });
@@ -184,7 +189,7 @@ auth = function (kiel){
 								kiel.response(req, res, {data : "Error parsing scopes: "+err}, 500);
 							}
 						} else {
-							kiel.response(req, res, {data : "Unauthorize request."}, 404);						
+							kiel.response(req, res, {data : "Unauthorize request."}, 404);
 						}
 					} else {
 						kiel.response(req, res, {data : "User does not exist."}, 404);
@@ -240,7 +245,7 @@ auth = function (kiel){
 			});
 		}, save_access_token = function (req, res, request_token) {
 			db._instance().collection('access_tokens',function (err,_collection) {
-				if(err) {kiel.response(req, res, {data : err}, 500);return;}	
+				if(err) {kiel.response(req, res, {data : err}, 500);return;}
 				_collection.find({user_id:req.get_args.user_id}).toArray(function (err,d) {
 					if(err) {
 						kiel.response(req, res, {data : err}, 500);
@@ -250,7 +255,7 @@ auth = function (kiel){
 						, ac = kiel.utils.hash(req.get_args.request_token + dt.getTime()) + kiel.utils.hash(req.get_args.user_id + kiel.utils.random());
 					if(d.length === 0) {
 						//if there are totally no access token for the user
-						insert_access_token(req,res,request_token,_collection,ac);	
+						insert_access_token(req,res,request_token,_collection,ac);
 					} else {
 						var crd = null;
 						for(var i=0; i<d.length;i++) {
@@ -284,25 +289,25 @@ auth = function (kiel){
 							});
 						}
 					}
-				});	
+				});
 			});
 		}, generate_access_token = function (req, res) {
 			db._instance().collection('request_tokens', function (err,_collection) {
 				if(err) {
 					kiel.response(req, res, {data : err}, 500);
 					return;
-				}	
+				}
 				_collection.find({request_token:req.get_args.request_token}).toArray(function (err,d) {
 					if(err) {
 						kiel.response(req, res, {data : err}, 500);
 						return;
-					}	
+					}
 					var dt = new Date();
 					/******TODO******/
 					/*** Create a cron job to clear expired and unused request token ***/
 					if(d.length !== 1 || d[0].app_id !== req.get_args.app_id || d[0].user_id !== req.get_args.user_id || d[0].expires <= dt.getTime()) {
 						kiel.response(req, res, {data : "Invalid/Expired request token."}, 404);
-						return;						
+						return;
 					} else {
 						save_access_token(req,res,d[0]);
 					}
@@ -329,7 +334,7 @@ auth = function (kiel){
 			// 			var d = new Date();
 			// 			save_request_token(req,res,{request_token: kiel.utils.hash(d.getTime())+kiel.utils.random(),user_id: req.get_args.user_id,app_id:req.get_args.app_id,scopes:scps,created_at:d.getTime(),expires:d.getTime()+60*60*1000});
 			// 		} else {
-			// 			kiel.response(req, res, {data : "Error in validating scopes"}, 400);									
+			// 			kiel.response(req, res, {data : "Error in validating scopes"}, 400);
 			// 		}
 			// 	});
 			// });
@@ -357,14 +362,14 @@ auth = function (kiel){
 		check_email = function (req, res, app, data) {
 			var inst = {};
 
-			db._instance().collection('users',function (err, _collection){ 
-				if(err){ kiel.response(req, res, {data : err}, 500); return; }	
+			db._instance().collection('users',function (err, _collection){
+				if(err){ kiel.response(req, res, {data : err}, 500); return; }
 
 				_collection.find({email: data.email}).toArray(function (e, _data){
-					if(err){ kiel.response(req, res, {data : e}, 500); return; }	
+					if(err){ kiel.response(req, res, {data : e}, 500); return; }
 
-					if (_data.length === 0) {			
-						kiel.response(req, res, {data: "The email does not belong to an account."}, 500); return; 	
+					if (_data.length === 0) {
+						kiel.response(req, res, {data: "The email does not belong to an account."}, 500); return;
 					} else {
 						inst.token = kiel.utils.hash(new Date().getTime()) + '-' + kiel.utils.hash(_data[0].email) + '-' + kiel.utils.hash('reset_password');
 						inst.email = _data[0].email;
@@ -376,7 +381,7 @@ auth = function (kiel){
 
 						db._instance().collection('password_reset_tokens', function (e, prt_collection) {
 
-							prt_collection.insert(inst, function (err) { 
+							prt_collection.insert(inst, function (err) {
 								if(err) { kiel.response(req, res, {data : err}, 500);return;}
 								kiel.response(req, res, inst, 200);
 							});
@@ -387,27 +392,27 @@ auth = function (kiel){
 		},
 		password_reset = function (req, res, app, data){
 			var u_id;
-			db._instance().collection('users',function (err, _collection){ 
-				if(err){ kiel.response(req, res, {data : err}, 500); return; }	
+			db._instance().collection('users',function (err, _collection){
+				if(err){ kiel.response(req, res, {data : err}, 500); return; }
 
 				_collection.find({email: data.email}).toArray(function (e, _data){
-					if(err){ kiel.response(req, res, {data : e}, 500); return; }	
+					if(err){ kiel.response(req, res, {data : e}, 500); return; }
 
-					if (_data.length === 0) {			
-						kiel.response(req, res, {data: "The email does not belong to an account."}, 500); return; 	
+					if (_data.length === 0) {
+						kiel.response(req, res, {data: "The email does not belong to an account."}, 500); return;
 					} else {
-						
+
 						db._instance().collection('password_reset_tokens', function (e, prt_collection) {
 
 							prt_collection.find({email: data.email, valid: 1, token: data.reset_token, expires : {$gte: new Date().getTime()}}).
 								sort({expires: -1}).
-								toArray(function (err, prt_data) { 
+								toArray(function (err, prt_data) {
 									if (err) { kiel.response(req, res, {data : err}, 500);return;}
-									
+
 									if (prt_data.length < 1 && _data[0].pfl === 'internal') {
 										kiel.response(req, res, {data : "Invalid or expired token."}, 500);
 										return;
-									} 
+									}
 									console.log(data.password);
 									console.log(kiel.utils.hash( kiel.utils.hash(data.password) + kiel.application_config.salt));
 									console.log(prt_data);
@@ -437,8 +442,146 @@ auth = function (kiel){
 					}
 				});
 			});
-			
-		};	
+
+		},
+        encrypt = function (algo, secret, toEnc) {
+            var cipher = crypto.createCipher(algo, secret),
+                crypted = cipher.update(toEnc, 'utf8', 'hex');
+
+            crypted += cipher.final('hex');
+
+            return crypted;
+        },
+        decrypt = function (algo, secret, toDec) {
+            var decipher = crypto.createDecipher(algo, secret),
+                decrypted = decipher.update(toDec, 'hex', 'utf8');
+
+            decrypted += decipher.final('utf8');
+
+            return decrypted;
+        },
+        find_id = function(req, res, app_data, post_data) {
+            var tmp = {},
+                algo = 'aes-256-ctr',
+                pass = 'epNIr9d2h0Ns_xM';
+
+            db._instance().collection('users', function (err, users) {
+                if (err) {
+                    kiel.response(req, res, {data : err} , 500);
+                    return;
+                }
+
+                users.find({ email : post_data.email}).toArray(function (err, data) {
+
+                    if (err) {
+                        kiel.response (req, res, { data : err}, 500);
+                        return;
+                    }
+                    if (data.length === 1) {
+                        tmp = {
+                            timestamp : +new Date,
+                            _id : data[0]._id,
+                            email : data[0].email,
+                            username : data[0].username,
+                            profile_info : data[0].profile_info,
+                            contact_info : data[0].contact_info
+                        };
+
+                        data = encrypt(algo, pass, JSON.stringify(tmp));
+
+                        return kiel.response(req, res,  {data : data}, 200);
+                    } else if (data.length > 1) {
+                        tmp = {
+                            message : "Multiple account was found. Freedom! user but data is currently faulty."
+                        };
+
+                        data = encrypt(algo, pass, JSON.stringify(tmp));
+
+                        return kiel.response(req, res, {data : data}, 409)
+                    } else {
+                        tmp = {
+                            message : "Not a Freedom! user"
+                        };
+
+                        data = encrypt(algo, pass, JSON.stringify(tmp));
+
+                        return kiel.response(req, res, { data : data}, 404)
+                    }
+
+                })
+            });
+        },
+        login_position = function (req, res, app_data, post_data) {
+            var scopes = app_data.basic_scopes.join(),
+                login_post;
+
+            if (post_data.source === "position_music") {
+                login_post = {
+                        app_id : app_data._id,
+                        source : post_data.source,
+                        email : post_data.email,
+                        password : post_data.password
+                    };
+            } else if (post_data.source === "google") {
+                login_post = {
+                        app_id : app_data._id,
+                        source : post_data.source,
+                        email : post_data.email,
+                        google_access_token : post_data.access_token
+                    };
+            } else {
+                return kiel.response(req, res, { data : 'invalid source'})
+            }
+
+            curl.post('http://localhost:3000/auth/login', { form : login_post} ,function (err, resp, body) {
+                var json;
+
+                if (err) {
+                    return kiel.response(req, res, { data: res.message}, 400);
+                }
+
+                json = JSON.parse(body);
+
+                if (resp.statusCode !== 200) {
+                    return kiel.response(req, res, { data: json.data}, 400);
+                }
+
+                curl('http://localhost:3000/auth/request_token?user_id='+json.user_data._id+'&scope_token='+app_data.scope_token+'&scopes='+scopes+'&app_id='+post_data.app_id, function (_err, _response, _body) {
+                    var _json;
+                    if (_err) {
+                        return kiel.response(req, res, { data: _err.message}, 400);
+                    }
+
+                    _json = JSON.parse(_body);
+
+                    if (_response.statusCode !== 200) {
+                        return kiel.response(req, res, { data: _json.data}, 400);
+                    }
+
+                    curl('http://localhost:3000/auth/access_token?user_id='+json.user_data._id+'&app_id='+post_data.app_id+'&request_token='+_json.request_token, function ( __err, __response, __body) {
+                        var __json,
+                            return_data,
+                            algo = 'aes-256-ctr',
+                            pwd = 'epNIr9d2h0Ns_xM';
+
+                        if (__err) {
+                            return kiel.response(req, res, { data: __err.message}, 400);
+                        }
+
+                        return_data = encrypt(algo, pwd, __body);
+                        __json = JSON.parse(__body);
+
+                        if (__response.statusCode !== 200) {
+                            return kiel.response(req, res, { data: _json.data}, 400);
+                        }
+
+                        return kiel.response(req, res, { data : return_data }, 200);
+                    });
+
+                });
+
+            });
+        };
 
 	return {
 		get : {
@@ -446,8 +589,8 @@ auth = function (kiel){
 				db.imports(null,['users','app','scopes']);
 				kiel.response(req, res, {data : "Import process started. See logs and server message"}, 200);
 				// kiel.response(req, res, {data : kiel.utils.hash('831e4ee9529422134b4a010611601adf-beaa4de45f5461ce8f638e76f48dd3c5')}, 200);
-		
-			} , 
+
+			} ,
 			random : function (req, res){
 				p='';
 				h = kiel.utils.hash('applicaion'+kiel.application_config.salt+new Date()+kiel.utils.random());
@@ -483,13 +626,19 @@ auth = function (kiel){
 				});
 
 				kiel.utils.has_scopes(scps, null, req.get_args.access_token, function (err,d){
-					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
-					
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }
+
 					kiel.response(req, res, {data : "Success"}, 200);
 					return;
-					
+
 				});
-			}
+			},
+            encrypt : function (text) {
+
+            },
+            decrypt : function (hash, key) {
+
+            }
 		},
 
 		post : {
@@ -505,7 +654,7 @@ auth = function (kiel){
 					return;
 				}
 				find_app(null,req,res,req.post_args,login_check);
-			}, 
+			},
 			logout : function (req, res) {
 				var rqrd = ['access_token','app_id']
 					, rst;
@@ -514,9 +663,9 @@ auth = function (kiel){
 					return;
 				}
 				db._instance().collection('access_tokens',function (err,_collection) {
-					if(err) {kiel.response(req, res, {data : err}, 500);return;}	
+					if(err) {kiel.response(req, res, {data : err}, 500);return;}
 					_collection.remove({access_token:req.post_args.access_token}, function (err,d) {
-						if(err) {kiel.response(req, res, {data : err}, 500);return;}	
+						if(err) {kiel.response(req, res, {data : err}, 500);return;}
 						db._instance().collection('oauth_session_scopes',function (err,_collection) {
 							_collection.remove({access_token:req.post_args.access_token}, function (err,d) {
 							});
@@ -545,8 +694,73 @@ auth = function (kiel){
 					return kiel.response(req, res, {data: "Password must be atleast 10 characters long."}, 500);
 				}
 				find_app(null, req, res, req.post_args, password_reset);
-			}
-		}, 
+			},
+            position : function (req, res) {
+                var rqrd = ['data'],
+                    algo = 'aes-256-ctr',
+                    pwd = 'epNIr9d2h0Ns_xM',
+                    data, post_data;
+
+				if(!(rst = kiel.utils.required_fields(rqrd, req.post_args)).stat){
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
+					return;
+				}
+
+                try{
+                    post_data = decrypt(algo, pwd, req.post_args.data);
+                } catch (e) {
+                    return kiel.response(req, res, {data: e.message}, 400);
+                }
+
+                try {
+                    data = qs.parse(post_data);
+                }
+                catch(e) {
+                    return kiel.response(req, res, {data: e.message}, 400);
+                }
+
+				if(!(rst = kiel.utils.required_fields(['app_id', 'email', 'auth', 'source'], data)).stat){
+					return kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 406);
+				}
+
+                data.auth = data.auth === 'true';
+                req.post_args.source = data.source
+
+                console.log(data);
+
+                if (!data.auth && data.source === 'position_music') {
+                    console.log('find_id only')
+                    find_app(null, req, res, data, find_id);
+                } else if (data.auth) {
+                    if (data.source === 'position_music') {
+                        console.log('login using username and password');
+
+                        if(!(rst = kiel.utils.required_fields(['password'], data)).stat){
+                            return kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 406);
+                        }
+
+                        req.post_args.email = data.email;
+                        req.post_args.password = data.password;
+                        req.post_args.source = data.source;
+                    } else if (data.source === 'google') {
+                        console.log('login using google');
+
+                        if(!(rst = kiel.utils.required_fields(['access_token'], data)).stat){
+                            return kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 406);
+                        }
+
+                        req.post_args.email = data.email;
+                        req.post_args.google_access_token = data.access_token;
+                    } else {
+                        return kiel.response(req, res, { data : 'invalid source '+data.source }, 400);
+                    }
+
+                    return find_app(null, req, res, data, login_position);
+                } else {
+                    return kiel.response(req, res, { data : "invalid auth"}, 406);
+                }
+            }
+		},
 
 		put : {
 			add_self_scopes : function (req, res) {
@@ -558,7 +772,7 @@ auth = function (kiel){
 					return;
 				}
 				kiel.utils.has_scopes(scopes, null, req.put_args.access_token, function (err,d){
-					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }
 					if(req.put_args.user_id !== d.user_id) {
 						kiel.response(req, res, {data : "Invalid user_id for access_token!"}, 404);
 						return;
@@ -567,7 +781,7 @@ auth = function (kiel){
 					find_app(null,req,res,d,add_scopes);
 				});
 
-			} , 
+			} ,
 			add_scopes : function (req, res) {
 				var rqrd = ['access_token','user_id','scopes']
 					, rst
@@ -577,7 +791,7 @@ auth = function (kiel){
 					return;
 				}
 				kiel.utils.has_scopes(scopes, null, req.put_args.access_token, function (err,d){
-					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }	
+					if(err){ kiel.response(req, res, {data : err.message}, err.response_code); return; }
 					if(!d) {
 						kiel.response(req, res, {data : "Invalid user_id for access_token!"}, 404);
 						return;
