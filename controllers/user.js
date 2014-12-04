@@ -188,6 +188,10 @@ user = function (kiel){
 				// 	return;
 				// }
 
+				if (!req.get_args.self) {
+					scopes.push('admin.view_all');
+				}
+
 				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function (err,d){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'language': 1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1};
@@ -197,6 +201,10 @@ user = function (kiel){
 					selectables['data_' + d.app_id] = 1;
 					req.get_args.self && ( condition._id = d.user_id );
 					
+					if (!!~scopes.indexOf('admin.view_all')) {
+						condition._id = req.get_args.user_id || null;
+					}
+
 					for (var prop in req.get_args) {
 						pp = prop.replace('app.',  'data_' + d.app_id + '.');
 						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
@@ -290,7 +298,7 @@ user = function (kiel){
 					return;
 				}
 
-				req.put_args.user_id && ((scps = ['users.edit','admin.view']) && (admin_edit = true));
+				req.put_args.user_id && ((scps = ['users.edit','admin.edit_all']) && (admin_edit = true));
 				
 				//checks the access token to proper edit mapping. Allows user to only edit themselves
 				kiel.utils.has_scopes(scps, null, req.put_args.access_token, function (err,data){
