@@ -7,7 +7,7 @@ var database = {
 		database : 'earnings_report'
 	},
 	mongodb	: {
-		name : "freedom2",
+		name : "freedom3",
 		host : "localhost",
 		port : 27017
 	}

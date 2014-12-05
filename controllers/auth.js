@@ -1,6 +1,6 @@
-var auth
-	, db = require(__dirname + "/../helpers/ndb")
-	, curl = require('request'),
+var auth,
+	db = require(__dirname + "/../helpers/ndb"),
+	curl = require('request'),
     crypto = require('crypto'),
     qs = require('querystring');
 

@@ -159,6 +159,7 @@ user = function (kiel){
 			index : function (req,res) {
 				var rqrd = ['access_token'],
 					scopes = ['self.view'],
+					opt_scopes = ['admin.view_all', 'network.view'],
 					rst,
 					uid,
 					prepend,
@@ -188,26 +189,39 @@ user = function (kiel){
 				// 	return;
 				// }
 
-				if (!req.get_args.self) {
-					scopes.push('admin.view_all');
-				}
+				// if (!req.get_args.self) {
+				// 	scopes.push('admin.view_all');
+				// }
 
-				kiel.utils.has_scopes(scopes, null, req.get_args.access_token, function (err,d){
+				kiel.utils.has_scopes(scopes, opt_scopes, req.get_args.access_token, function (err, d, scopes){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
-					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'language': 1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1};
+					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'language': 1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1},
+						allowed = false;
 					//TODO change selectables here depending on the scopes
 
-
+					console.log('========data=========');
+					console.log(d);
+					console.log(scopes);
 					selectables['data_' + d.app_id] = 1;
-					req.get_args.self && ( condition._id = d.user_id );
-					
-					if (!!~scopes.indexOf('admin.view_all')) {
-						condition._id = req.get_args.user_id || null;
+					if (req.get_args.self) { 
+						condition._id = d.user_id;
+					} else {
+						scopes.forEach(function (s) {
+							if (!!~[d.scope_token + 'admin.view_all',	d.scope_token + 'network.view'].indexOf(s.scope)) {
+								allowed = true;
+							}
+						});
+
+						if (req.get_args.user_id && allowed) {
+							condition._id = req.get_args.user_id.split(',').map(function (uid) {
+								return { _id: uid.trim()};
+							});
+						}
 					}
 
 					for (var prop in req.get_args) {
 						pp = prop.replace('app.',  'data_' + d.app_id + '.');
-						if ( [ '_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
+						if ( [ '_id', 'user_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
 							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false') {
 
 								prepend = check_prepended(pp, (req.get_args[prop] == 'true' ? true : false) );
@@ -218,13 +232,6 @@ user = function (kiel){
 								}
 							} else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
-							} else if (!req.get_args.self && prop == 'user_id') {
-								(req.get_args.user_id.split(',')).forEach(function (u) {
-									user_ids.push({ _id : u.trim() });
-								});
-					
-								condition['$or'] = user_ids; 
-
 							} else if (prop != 'user_id') {
 								prepend = check_prepended(pp, req.get_args[prop]);
 								if (prepend) {

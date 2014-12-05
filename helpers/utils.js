@@ -32,10 +32,14 @@ exports.random = function () {
     return str;
 };
 
+/*
+	Returns all the scope of the user with the access_token
+*/
 exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
-	var ac_collection
-		, os_collection
-		, app_collection,
+	var ac_collection,
+		os_collection,
+		app_collection,
+		final_scopes = [],
 		dt = new Date();
 	
 	db._instance().collection('access_tokens',function(err,_collection) {
@@ -85,8 +89,10 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 										callback({message : 'You dont have permission to do this operation.',response_code : 401});
 										return;
 									}
+									final_scopes = final_scopes.concat(sc);
+
 									if (!optional_scopes)
-										return callback(null, d[0]);
+										return callback(null, d[0], final_scopes);
 
 									else {
 										// for optional scopes
@@ -94,10 +100,13 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 											if (err) {callback({message : err,response_code : 500});return;}
 											console.log('======RETURN OPTIONAL SCOPES======');
 											console.log(sc);
-											if (osc.length > 0) 
-												return callback(null, d[0], osc);
-											else 
-												return callback(null, d[0], null);
+											if (osc.length > 0) {
+												final_scopes = final_scopes.concat(osc);
+												return callback(null, d[0], final_scopes);
+											}
+											else {
+												return callback(null, d[0], final_scopes);
+											}
 										});	
 									} 
 										
