@@ -92,20 +92,20 @@ exports.has_scopes = function(scope, optional_scopes, access_token, callback) {
 									final_scopes = final_scopes.concat(sc);
 
 									if (!optional_scopes)
-										return callback(null, d[0], final_scopes);
+										return callback(null, d[0], final_scopes, a[0]);
 
 									else {
 										// for optional scopes
 										os_collection.find({$or : o_scps}).toArray(function(err, osc){ 
 											if (err) {callback({message : err,response_code : 500});return;}
 											console.log('======RETURN OPTIONAL SCOPES======');
-											console.log(sc);
+											console.log(osc);
 											if (osc.length > 0) {
 												final_scopes = final_scopes.concat(osc);
-												return callback(null, d[0], final_scopes);
+												return callback(null, d[0], final_scopes, a[0]);
 											}
 											else {
-												return callback(null, d[0], final_scopes);
+												return callback(null, d[0], final_scopes, a[0]);
 											}
 										});	
 									} 

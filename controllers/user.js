@@ -184,38 +184,32 @@ user = function (kiel){
 				
 				s_condition[sort] = sort_order;
 				
-				// if(!req.get_args.self && !req.get_args.user_id) {
-				// 	kiel.response(req, res, {data : "Missing user_id"}, 404);
-				// 	return;
-				// }
-
-				// if (!req.get_args.self) {
-				// 	scopes.push('admin.view_all');
-				// }
-
-				kiel.utils.has_scopes(scopes, opt_scopes, req.get_args.access_token, function (err, d, scopes){
+				kiel.utils.has_scopes(scopes, opt_scopes, req.get_args.access_token, function (err, d, scopes, app){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'language': 1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1},
 						allowed = false;
 					//TODO change selectables here depending on the scopes
 
-					console.log('========data=========');
-					console.log(d);
-					console.log(scopes);
 					selectables['data_' + d.app_id] = 1;
 					if (req.get_args.self) { 
 						condition._id = d.user_id;
 					} else {
 						scopes.forEach(function (s) {
-							if (!!~[d.scope_token + 'admin.view_all',	d.scope_token + 'network.view'].indexOf(s.scope)) {
+							if (!!~[app.scope_token + '.admin.view_all', app.scope_token + '.network.view'].indexOf(s.scope)) {
 								allowed = true;
 							}
 						});
-
+						
 						if (req.get_args.user_id && allowed) {
-							condition._id = req.get_args.user_id.split(',').map(function (uid) {
-								return { _id: uid.trim()};
+							tmp = req.get_args.user_id.split(',').map(function (uid) {
+								return uid.trim();
 							});
+
+							condition._id = {
+								$in: tmp
+							}
+						} else {
+							kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
 						}
 					}
 
