@@ -165,7 +165,7 @@ user = function (kiel){
 					prepend,
 					condition = {},
 					s_condition = {},
-					limit = 10,
+					limit = 20,
 					skip = 0,
 					sort = '_id',
 					sort_order = 1,
@@ -177,8 +177,8 @@ user = function (kiel){
 					return;
 				}
 	
-				req.get_args.limit 	&& ( limit = req.get_args.limit );
-				req.get_args.skip 	&& ( skip = req.get_args.skip );
+				req.get_args.limit 	&& ( limit = +req.get_args.limit );
+				req.get_args.skip 	&& ( skip = +req.get_args.skip );
 				req.get_args.sort 	&& ( sort = req.get_args.sort );
 				req.get_args.sort_order 	&& ( sort_order = req.get_args.sort_order*1 );
 				
@@ -209,13 +209,13 @@ user = function (kiel){
 								$in: tmp
 							}
 						} else {
-							kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
+							// kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
 						}
 					}
 
 					for (var prop in req.get_args) {
 						pp = prop.replace('app.',  'data_' + d.app_id + '.');
-						if ( [ '_id', 'user_id', 'password', 'self', 'access_token'].indexOf(prop) <= -1 ) {
+						if ( [ '_id', 'user_id', 'password', 'self', 'access_token', 'limit', 'skip', 'sort', 'sort_order'].indexOf(prop) <= -1 ) {
 							if (req.get_args[prop] == 'true' || req.get_args[prop] == 'false') {
 
 								prepend = check_prepended(pp, (req.get_args[prop] == 'true' ? true : false) );
@@ -226,6 +226,8 @@ user = function (kiel){
 								}
 							} else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
+							} else if (prop === 'custom_query') {
+
 							} else if (prop != 'user_id') {
 								prepend = check_prepended(pp, req.get_args[prop]);
 								if (prepend) {
