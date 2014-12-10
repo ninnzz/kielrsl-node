@@ -228,10 +228,10 @@ user = function (kiel){
 							} else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
 							} else if (prop === 'search') {
-								condition.$or.push({ profile_info.lname: req.get_args[prop] });
-								condition.$or.push({ profile_info.fname: req.get_args[prop] });
-								condition.$or.push({ username: req.get_args[prop] });
-								condition.$or.push({ email: req.get_args[prop] });
+								condition.$or.push({ 'profile_info.lname': req.get_args[prop] });
+								condition.$or.push({ 'profile_info.fname': req.get_args[prop] });
+								condition.$or.push({ 'username': req.get_args[prop] });
+								condition.$or.push({ 'email': req.get_args[prop] });
 							} else if (prop != 'user_id') {
 								prepend = check_prepended(pp, req.get_args[prop]);
 								if (prepend) {
