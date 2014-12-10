@@ -208,7 +208,7 @@ user = function (kiel){
 							condition._id = {
 								$in: tmp
 							}
-							condition.$or = [];
+							
 						} else {
 							// kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
 						}
@@ -228,6 +228,9 @@ user = function (kiel){
 							} else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
 							} else if (prop === 'search') {
+								if (!condition.$or) {
+									condition.$or = [];
+								}
 								condition.$or.push({ 'profile_info.lname': req.get_args[prop] });
 								condition.$or.push({ 'profile_info.fname': req.get_args[prop] });
 								condition.$or.push({ 'username': req.get_args[prop] });
