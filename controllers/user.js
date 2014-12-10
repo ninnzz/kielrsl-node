@@ -208,6 +208,7 @@ user = function (kiel){
 							condition._id = {
 								$in: tmp
 							}
+							condition.$or = [];
 						} else {
 							// kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
 						}
@@ -226,8 +227,11 @@ user = function (kiel){
 								}
 							} else if ( !isNaN(req.get_args[prop])  && req.get_args[prop] !== '' ) {
 								condition[ prop.replace('app.',  'data_' + d.app_id + '.') ] = req.get_args[prop] * 1;
-							} else if (prop === 'custom_query') {
-
+							} else if (prop === 'search') {
+								condition.$or.push({ profile_info.lname: req.get_args[prop] });
+								condition.$or.push({ profile_info.fname: req.get_args[prop] });
+								condition.$or.push({ username: req.get_args[prop] });
+								condition.$or.push({ email: req.get_args[prop] });
 							} else if (prop != 'user_id') {
 								prepend = check_prepended(pp, req.get_args[prop]);
 								if (prepend) {
@@ -258,7 +262,24 @@ user = function (kiel){
 							});
 					});
 				});
-			}
+			},
+
+			user_count : function (req, res) {
+			// 	db._instance().collection('users',function (err,_collection){
+			// 		if(err){ kiel.response(req, res, {data : err}, 500); return;}
+			// 		_collection.find({}).toArray(function (err,d){
+			// 			if(d.length > 0){
+			// 				kiel.response(req, res, {data :"Email is already associated with an existing account."}, 404);
+			// 			} else {
+			// 				try{
+			// 					valid_app(req,res);
+			// 				} catch (err) {
+			// 					kiel.response(req, res, {data : err}, 500);
+			// 				}
+			// 			}
+			// 		});
+			// 	});
+			// }
 		},
 
 		post : {
