@@ -279,7 +279,7 @@ user = function (kiel){
 			// 			}
 			// 		});
 			// 	});
-			// }
+			}
 		},
 
 		post : {
