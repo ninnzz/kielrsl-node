@@ -187,12 +187,11 @@ user = function (kiel){
 				kiel.utils.has_scopes(scopes, opt_scopes, req.get_args.access_token, function (err, d, scopes, app){
 					if(err) { kiel.response(req, res, {data : err.message},err.response_code);return;}
 					var selectables = {'_id':1, 'email':1, 'profile_info':1, 'email_confirmed':1, 'active':1, 'referrer':1, 'referral_link':1, 'language': 1, 'is_system_admin':1, 'contact_info':1, 'created_at':1, 'updated_at':1, 'pfl':1},
-						allowed = false,
-						recruiter = false;
+						allowed = false;
 					//TODO change selectables here depending on the scopes
 
 					scopes.forEach(function (s) {
-						if (!!~[app.scope_token + '.admin.view_all', app.scope_token + '.network.view'].indexOf(s.scope)) {
+						if (!!~[app.scope_token + '.admin.view_all', app.scope_token + '.network.view',  app.scope_token + '.recruiter.view'].indexOf(s.scope)) {
 							allowed = true;
 						}
 					});
@@ -215,15 +214,7 @@ user = function (kiel){
 							// kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
 						}
 					} else {
-
-						scopes.forEach(function (s) {
-							if (s.scope === app.scope_token + '.recruiter.view') {
-								recruiter = true;
-							}
-						});
-						if (!recruiter) {
-							condition._id = d.user_id;
-						}
+						condition._id = d.user_id;
 					}
 
 					for (var prop in req.get_args) {
