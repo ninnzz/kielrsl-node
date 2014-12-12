@@ -190,16 +190,17 @@ user = function (kiel){
 						allowed = false;
 					//TODO change selectables here depending on the scopes
 
+					scopes.forEach(function (s) {
+						if (!!~[app.scope_token + '.admin.view_all', app.scope_token + '.network.view'].indexOf(s.scope)) {
+							allowed = true;
+						}
+					});
+
+
 					selectables['data_' + d.app_id] = 1;
 					if (req.get_args.self) { 
 						condition._id = d.user_id;
-					} else {
-						scopes.forEach(function (s) {
-							if (!!~[app.scope_token + '.admin.view_all', app.scope_token + '.network.view'].indexOf(s.scope)) {
-								allowed = true;
-							}
-						});
-						
+					} else if (req.get_args.user_id) {	
 						if (req.get_args.user_id && allowed) {
 							tmp = req.get_args.user_id.split(',').map(function (uid) {
 								return uid.trim();
@@ -210,8 +211,10 @@ user = function (kiel){
 							}
 							
 						} else {
-							// kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
+							kiel.response(req, res, {data :"You don't have the right access_token to do that."}, 404);
 						}
+					} else {
+						condition._id = d.user_id;
 					}
 
 					for (var prop in req.get_args) {
