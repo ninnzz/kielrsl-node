@@ -14,6 +14,10 @@ exports.required_fields = function(required,fields)
 			return {field : required[req], stat : false};
 		}
 	}
+
+	
+
+
 	return {stat : true};
 };
 

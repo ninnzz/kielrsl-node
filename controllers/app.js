@@ -56,14 +56,38 @@ app = function(kiel){
 	
 	return {
 		get : {
+			app_info : function (req, res) {
+				var rqrd = ['app_id','app_secret'],
+					rst;
 
+				if(!(rst = kiel.utils.required_fields(rqrd,req.get_args)).stat){
+					console.log(rst);
+					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
+					return;
+				}
+
+				db._instance().collection('app', function(err, _collection){
+					_collection.find({_id: req.get_args.app_id, secret: req.get_args.app_secret}) 
+						.toArray(function (err, app) {
+						if (err) {
+							kiel.response(req, res, {data : "Failed to update user in db."}, 500);
+						} else {
+							kiel.response(req, res, {data : app}, 200);
+						}
+					});
+				});
+			}
 		},
 
 		post : {
 			own_app_data : function(req, res) {
-				var rqrd = ['app_id','access_token','user_id','app_data']
-					, rst;
+				var rqrd = ['app_id','access_token','user_id','app_data'],
+					rst;
+
+					console.log(rqrd);
+					console.log(req.post_args);
 				if(!(rst = kiel.utils.required_fields(rqrd,req.post_args)).stat){
+					console.log(rst);
 					kiel.response(req, res, {data : "Missing fields ["+rst.field+']'}, 500);
 					return;
 				}
